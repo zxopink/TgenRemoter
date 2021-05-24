@@ -4,9 +4,9 @@
         <name>TgenNetProtocol</name>
     </assembly>
     <members>
-        <member name="T:TgenNetProtocol.ClientDataOld">
+        <member name="T:TgenNetProtocol.ClientData">
             <summary>
-            Class made to keep track for the serverManager
+            A struct made to keep track of clients for the serverManager
             </summary>
         </member>
         <member name="E:TgenNetProtocol.ClientManager.OnDisconnect">

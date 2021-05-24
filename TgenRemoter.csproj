@@ -85,19 +85,15 @@
     <Compile Include="Controller.Designer.cs">
       <DependentUpon>Controller.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormTaskbarFlash.cs" />
     <Compile Include="Menu.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Menu.Designer.cs">
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
-    <Compile Include="Graphic Tester.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Graphic Tester.Designer.cs">
-      <DependentUpon>Graphic Tester.cs</DependentUpon>
-    </Compile>
     <Compile Include="KnownFolders.cs" />
+    <Compile Include="NetworkCodes.cs" />
     <Compile Include="NetworkMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -110,9 +106,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Menu.resx">
       <DependentUpon>Menu.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Graphic Tester.resx">
-      <DependentUpon>Graphic Tester.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -142,7 +135,7 @@
     <None Include="Resources\caricature_beginning-of-the-end.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Assets\" />
+    <Content Include="Assets\TeamBiewer.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -160,6 +153,10 @@
     <ProjectReference Include="..\..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj">
       <Project>{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}</Project>
       <Name>TgenNetProtocol</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TgenSerializer\TgenSerializer\TgenSerializer.csproj">
+      <Project>{0902c51a-df9d-4908-911e-5d74518d29bc}</Project>
+      <Name>TgenSerializer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

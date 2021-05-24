@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Controller));
             this.Tick = new System.Windows.Forms.Timer(this.components);
             this.ScreenSharePictureBox = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.ScreenSharePictureBox)).BeginInit();
@@ -52,16 +53,19 @@
             // 
             // Controller
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.ScreenSharePictureBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Controller";
             this.Text = "Controller";
             this.Load += new System.EventHandler(this.Controller_Load);
             this.SizeChanged += new System.EventHandler(this.Controller_SizeChanged);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Controller_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Controller_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Controller_KeyDown);
             ((System.ComponentModel.ISupportInitialize)(this.ScreenSharePictureBox)).EndInit();
             this.ResumeLayout(false);
 

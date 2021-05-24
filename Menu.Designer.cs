@@ -28,93 +28,34 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.publicIpLabel = new System.Windows.Forms.Label();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Menu));
             this.partnerIp = new System.Windows.Forms.TextBox();
             this.Connect = new System.Windows.Forms.Button();
-            this.copyPublicIpButton = new System.Windows.Forms.Button();
-            this.copyLocalIpButton = new System.Windows.Forms.Button();
-            this.localIpLabel = new System.Windows.Forms.Label();
-            this.portLabel = new System.Windows.Forms.Label();
-            this.serverListenCheckBox = new System.Windows.Forms.CheckBox();
             this.CreditsLabel = new System.Windows.Forms.Label();
             this.CheckFileTransformation = new System.Windows.Forms.CheckBox();
-            this.ButtonFilePath = new System.Windows.Forms.Button();
+            this.FIiePathBtn = new System.Windows.Forms.Button();
+            this.PassLabel = new System.Windows.Forms.Label();
+            this.CopyPassBtn = new System.Windows.Forms.Button();
+            this.FilesInfoBtn = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
-            // 
-            // publicIpLabel
-            // 
-            this.publicIpLabel.AutoSize = true;
-            this.publicIpLabel.Location = new System.Drawing.Point(147, 65);
-            this.publicIpLabel.Name = "publicIpLabel";
-            this.publicIpLabel.Size = new System.Drawing.Size(49, 13);
-            this.publicIpLabel.TabIndex = 0;
-            this.publicIpLabel.Text = "Public IP";
             // 
             // partnerIp
             // 
-            this.partnerIp.Location = new System.Drawing.Point(520, 70);
+            this.partnerIp.Location = new System.Drawing.Point(210, 60);
             this.partnerIp.Name = "partnerIp";
             this.partnerIp.Size = new System.Drawing.Size(100, 20);
             this.partnerIp.TabIndex = 1;
             // 
             // Connect
             // 
-            this.Connect.Location = new System.Drawing.Point(533, 96);
+            this.Connect.Location = new System.Drawing.Point(223, 86);
             this.Connect.Name = "Connect";
             this.Connect.Size = new System.Drawing.Size(75, 23);
             this.Connect.TabIndex = 2;
             this.Connect.Text = "Connect";
             this.Connect.UseVisualStyleBackColor = true;
             this.Connect.Click += new System.EventHandler(this.Connect_Click);
-            // 
-            // copyPublicIpButton
-            // 
-            this.copyPublicIpButton.Location = new System.Drawing.Point(289, 60);
-            this.copyPublicIpButton.Name = "copyPublicIpButton";
-            this.copyPublicIpButton.Size = new System.Drawing.Size(75, 23);
-            this.copyPublicIpButton.TabIndex = 3;
-            this.copyPublicIpButton.Text = "Copy";
-            this.copyPublicIpButton.UseVisualStyleBackColor = true;
-            this.copyPublicIpButton.Click += new System.EventHandler(this.copyPublicIpButton_Click);
-            // 
-            // copyLocalIpButton
-            // 
-            this.copyLocalIpButton.Location = new System.Drawing.Point(289, 96);
-            this.copyLocalIpButton.Name = "copyLocalIpButton";
-            this.copyLocalIpButton.Size = new System.Drawing.Size(75, 23);
-            this.copyLocalIpButton.TabIndex = 4;
-            this.copyLocalIpButton.Text = "Copy";
-            this.copyLocalIpButton.UseVisualStyleBackColor = true;
-            this.copyLocalIpButton.Click += new System.EventHandler(this.copyLocalIpButton_Click);
-            // 
-            // localIpLabel
-            // 
-            this.localIpLabel.AutoSize = true;
-            this.localIpLabel.Location = new System.Drawing.Point(147, 106);
-            this.localIpLabel.Name = "localIpLabel";
-            this.localIpLabel.Size = new System.Drawing.Size(42, 13);
-            this.localIpLabel.TabIndex = 5;
-            this.localIpLabel.Text = "local IP";
-            // 
-            // portLabel
-            // 
-            this.portLabel.AutoSize = true;
-            this.portLabel.Location = new System.Drawing.Point(223, 148);
-            this.portLabel.Name = "portLabel";
-            this.portLabel.Size = new System.Drawing.Size(26, 13);
-            this.portLabel.TabIndex = 6;
-            this.portLabel.Text = "Port";
-            // 
-            // serverListenCheckBox
-            // 
-            this.serverListenCheckBox.AutoSize = true;
-            this.serverListenCheckBox.Location = new System.Drawing.Point(150, 28);
-            this.serverListenCheckBox.Name = "serverListenCheckBox";
-            this.serverListenCheckBox.Size = new System.Drawing.Size(92, 17);
-            this.serverListenCheckBox.TabIndex = 7;
-            this.serverListenCheckBox.Text = "Listen (server)";
-            this.serverListenCheckBox.UseVisualStyleBackColor = true;
-            this.serverListenCheckBox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // CreditsLabel
             // 
@@ -138,33 +79,72 @@
             this.CheckFileTransformation.UseVisualStyleBackColor = true;
             this.CheckFileTransformation.CheckedChanged += new System.EventHandler(this.CheckFileTransformation_CheckedChanged);
             // 
-            // ButtonFilePath
+            // FIiePathBtn
             // 
-            this.ButtonFilePath.Location = new System.Drawing.Point(16, 205);
-            this.ButtonFilePath.Name = "ButtonFilePath";
-            this.ButtonFilePath.Size = new System.Drawing.Size(110, 23);
-            this.ButtonFilePath.TabIndex = 11;
-            this.ButtonFilePath.Text = "Folder Target";
-            this.ButtonFilePath.UseVisualStyleBackColor = true;
-            this.ButtonFilePath.Click += new System.EventHandler(this.ButtonFilePath_Click);
+            this.FIiePathBtn.Location = new System.Drawing.Point(16, 205);
+            this.FIiePathBtn.Name = "FIiePathBtn";
+            this.FIiePathBtn.Size = new System.Drawing.Size(110, 23);
+            this.FIiePathBtn.TabIndex = 11;
+            this.FIiePathBtn.Text = "Folder Target";
+            this.FIiePathBtn.UseVisualStyleBackColor = true;
+            this.FIiePathBtn.Click += new System.EventHandler(this.ButtonFilePath_Click);
+            // 
+            // PassLabel
+            // 
+            this.PassLabel.AutoSize = true;
+            this.PassLabel.Location = new System.Drawing.Point(12, 65);
+            this.PassLabel.Name = "PassLabel";
+            this.PassLabel.Size = new System.Drawing.Size(35, 13);
+            this.PassLabel.TabIndex = 12;
+            this.PassLabel.Text = "Code:";
+            // 
+            // CopyPassBtn
+            // 
+            this.CopyPassBtn.Location = new System.Drawing.Point(80, 59);
+            this.CopyPassBtn.Name = "CopyPassBtn";
+            this.CopyPassBtn.Size = new System.Drawing.Size(75, 23);
+            this.CopyPassBtn.TabIndex = 13;
+            this.CopyPassBtn.Text = "Copy";
+            this.CopyPassBtn.UseVisualStyleBackColor = true;
+            this.CopyPassBtn.Click += new System.EventHandler(this.CopyPassBtn_Click);
+            // 
+            // FilesInfoBtn
+            // 
+            this.FilesInfoBtn.Location = new System.Drawing.Point(16, 234);
+            this.FilesInfoBtn.Name = "FilesInfoBtn";
+            this.FilesInfoBtn.Size = new System.Drawing.Size(75, 23);
+            this.FilesInfoBtn.TabIndex = 14;
+            this.FilesInfoBtn.Text = "Note";
+            this.FilesInfoBtn.UseVisualStyleBackColor = true;
+            this.FilesInfoBtn.Click += new System.EventHandler(this.FilesInfoBtn_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(207, 44);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 13);
+            this.label1.TabIndex = 15;
+            this.label1.Text = "Partner\'s code:";
             // 
             // Menu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.ButtonFilePath);
+            this.ClientSize = new System.Drawing.Size(337, 274);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.FilesInfoBtn);
+            this.Controls.Add(this.CopyPassBtn);
+            this.Controls.Add(this.PassLabel);
+            this.Controls.Add(this.FIiePathBtn);
             this.Controls.Add(this.CheckFileTransformation);
             this.Controls.Add(this.CreditsLabel);
-            this.Controls.Add(this.serverListenCheckBox);
-            this.Controls.Add(this.portLabel);
-            this.Controls.Add(this.localIpLabel);
-            this.Controls.Add(this.copyLocalIpButton);
-            this.Controls.Add(this.copyPublicIpButton);
             this.Controls.Add(this.Connect);
             this.Controls.Add(this.partnerIp);
-            this.Controls.Add(this.publicIpLabel);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "Menu";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Menu";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
@@ -173,18 +153,15 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label publicIpLabel;
         private System.Windows.Forms.TextBox partnerIp;
         private System.Windows.Forms.Button Connect;
-        private System.Windows.Forms.Button copyPublicIpButton;
-        private System.Windows.Forms.Button copyLocalIpButton;
-        private System.Windows.Forms.Label localIpLabel;
-        private System.Windows.Forms.Label portLabel;
-        private System.Windows.Forms.CheckBox serverListenCheckBox;
         private System.Windows.Forms.Label CreditsLabel;
         private System.Windows.Forms.CheckBox CheckFileTransformation;
-        private System.Windows.Forms.Button ButtonFilePath;
+        private System.Windows.Forms.Button FIiePathBtn;
+        private System.Windows.Forms.Label PassLabel;
+        private System.Windows.Forms.Button CopyPassBtn;
+        private System.Windows.Forms.Button FilesInfoBtn;
+        private System.Windows.Forms.Label label1;
     }
 }
 

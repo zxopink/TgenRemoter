@@ -63,6 +63,15 @@ namespace TgenRemoter
         }
 
         [Serializable]
+        public class RemoteControlKeyboard
+        {
+            public string input;
+            public RemoteControlKeyboard(string input) => this.input = input;
+            public void SignKey() => System.Windows.Forms.SendKeys.Send(input);
+            public static implicit operator RemoteControlKeyboard(string input) => new RemoteControlKeyboard(input);
+        }
+
+        [Serializable]
         public class RemoteControlFrame
         {
             byte[] frameData;

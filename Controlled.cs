@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetTools;
@@ -17,11 +10,11 @@ namespace TgenRemoter
     using static NetworkMessages;
     public partial class Controlled : FormNetworkBehavour
     {
-        ServerManager serverManager;
-        public Controlled(ServerManager serverManager)
+        ClientManager clientManager;
+        public Controlled(ClientManager clientManager)
         {
             InitializeComponent();
-            this.serverManager = serverManager;
+            this.clientManager = clientManager;
         }
 
         private void Controlled_Load(object sender, EventArgs e)
@@ -29,44 +22,32 @@ namespace TgenRemoter
             AllowDrop = true;
             FormClosed += Controlled_FormClosed;
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            serverManager.SendToAll(new ConnectionIntializedEvent());
+            clientManager.Send(new ConnectionIntializedEvent());
         }
 
-        [ServerNetworkReciver]
+        [ClientNetworkReciver]
         public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized )
         {
-            serverManager.SendToAll(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
+            clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
         }
 
         private void Controlled_FormClosed(object sender, FormClosedEventArgs e)
         {
-            serverManager.SendToAll(new PartnerLeft());
-            serverManager.Close();
+            clientManager.Send(new PartnerLeft());
+            clientManager.Close();
             Application.Exit();
         }
 
-        [ServerNetworkReciver]
+        [ClientNetworkReciver]
         public void OnMouseRecive(RemoteControlMousePos mousePoint)
         {
-            /*
-            IntPtr desktopPtr = GetDC(IntPtr.Zero);
-            Graphics g = Graphics.FromHdc(desktopPtr);
-
-            SolidBrush b = new SolidBrush(Color.Red);
-            g.FillRectangle(b, new Rectangle((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width - 23), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height - 80), 10, 10));
-
-            g.Dispose();
-            ReleaseDC(IntPtr.Zero, desktopPtr);
-            */
             Cursor.Position = new Point((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width - 23), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height - 80));
         }
 
-        //[DllImport("User32.dll")]
-        //public static extern IntPtr GetDC(IntPtr hwnd);
-        //[DllImport("User32.dll")]
-        //public static extern void ReleaseDC(IntPtr hwnd, IntPtr dc);
+        [ClientNetworkReciver]
+        public void OnKeyboardRecive(RemoteControlKeyboard keyboardInput) => Console.WriteLine(keyboardInput.input); //keyboardInput.SignKey(); //CAUSES ISSUES RN
 
-        [ServerNetworkReciver]
+        [ClientNetworkReciver]
         public void OnMousePress(RemoteControlMousePress mousePress)
         {
             switch (mousePress.pressType)
@@ -84,12 +65,13 @@ namespace TgenRemoter
             }   
         }
 
-        [ServerNetworkReciver]
+        [ClientNetworkReciver]
         public void Disconnected(PartnerLeft a)
         {
-            serverManager.Close();
+            clientManager.Close();
             MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Close();
+            Application.Exit();
         }
 
         #region Mouse Press Event
@@ -125,22 +107,23 @@ namespace TgenRemoter
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
             g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
-            //CompressImage(bitmap, 5);
-            serverManager.SendToAll(new RemoteControlFrame(bitmap)); //PAY ATTENTION TO THIS LINE
+            clientManager.Send(new RemoteControlFrame(bitmap), true);
         }
 
         bool partnerAllowFiles;
-        [ServerNetworkReciver]
+        [ClientNetworkReciver]
         public void GotSettings(NetworkPartnerSettings partnerSettings)
         {
             partnerAllowFiles = partnerSettings.AllowFiles;
         }
 
-        [ServerNetworkReciver]
+        [ClientNetworkReciver]
         public void GotNetworkFiles(NetworkFile file)
         {
-            if(RemoteSettings.CanSendFiles)
-                Tools.UnpackFile(RemoteSettings.FolderPath, file);
+            if (!RemoteSettings.CanSendFiles) return;
+
+            Tools.UnpackFile(RemoteSettings.FolderPath, file);
+            FormTaskbarFlash.FlashWindowEx(this);
         }
 
         private void Controlled_DragEnter(object sender, DragEventArgs e)
@@ -163,7 +146,7 @@ namespace TgenRemoter
             }
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) serverManager.SendToAll(Tools.PackFile(file));
+            foreach (string file in files) clientManager.Send(Tools.PackFile(file));
         }
     }
 }

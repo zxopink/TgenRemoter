@@ -1,5 +1,0 @@
-The listener is already closed!
-Accepting new socket!
-Aborting client: 0
-The listener is already closed!
-The listener is already closed!

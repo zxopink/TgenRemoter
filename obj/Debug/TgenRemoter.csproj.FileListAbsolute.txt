@@ -2,7 +2,6 @@ C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.csproj
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.Controlled.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.Controller.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.Menu.resources
-C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.Graphic_Tester.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.Properties.Resources.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Debug\TgenRemoter.csproj.GenerateResource.cache
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\bin\Debug\TgenRemoter.exe.config

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TgenRemoter
 {
+
     public static class RemoteSettings
     {
         /// <summary>
@@ -17,5 +14,25 @@ namespace TgenRemoter
         /// Download path for remoted files
         /// </summary>
         public static string FolderPath;
+    }
+
+    [Serializable]
+    public class RemoteSettingsObj
+    {
+        /// <summary>
+        /// Does the client agree to get files?
+        /// </summary>
+        public bool CanSendFiles;
+
+        /// <summary>
+        /// Download path for remoted files
+        /// </summary>
+        public string FolderPath;
+
+        public RemoteSettingsObj(bool canSendFiles, string folderPath)
+        {
+            this.CanSendFiles = canSendFiles;
+            this.FolderPath = folderPath;
+        }
     }
 }

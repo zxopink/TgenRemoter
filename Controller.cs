@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetTools;
@@ -33,6 +26,7 @@ namespace TgenRemoter
             ScreenSharePictureBox.Width = ClientRectangle.Width;
             ScreenSharePictureBox.Height = ClientRectangle.Height;
             SizeChanged += Controller_SizeChanged;
+            clientManager.Send(new ConnectionIntializedEvent());
         }
 
         private void ScreenSharePictureBox_MouseClick(object sender, MouseEventArgs e) {
@@ -57,8 +51,15 @@ namespace TgenRemoter
                     break;
             }
         }
-        //private void ScreenSharePictureBox_MouseDoubleClick(object sender, MouseEventArgs e) =>
-            //clientManager.Send(new NetworkMessages.RemoteControlMousePress(NetworkMessages.RemoteControlMousePress.PressType.doubleClick));
+
+        private void Controller_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!RectangleToScreen(ClientRectangle).Contains(Cursor.Position)) //detects if the controller is in the monitor window
+                return;
+
+            RemoteControlKeyboard input = e.KeyCode.ToString();
+            clientManager.Send(input);
+        }
 
         private void Controller_SizeChanged(object sender, EventArgs e)
         {
@@ -78,14 +79,11 @@ namespace TgenRemoter
             if (!RectangleToScreen(ClientRectangle).Contains(Cursor.Position)) //detects if the controller is in the monitor window
                 return;
 
-            //Screen.PrimaryScreen.Bounds.
             double xPos = (Cursor.Position.X - Location.X) / (double)ClientRectangle.Width;
             double yPos = (Cursor.Position.Y - Location.Y) / (double)ClientRectangle.Height;
-            //float xPos = Cursor.Position.X / Width;
-            //float yPos = Cursor.Position.Y / Height;
+
             RemoteControlMousePos mousePos = new RemoteControlMousePos(xPos, yPos);
 
-            //NetworkMessages.RemoteControlMousePos mousePos = Cursor.Position; //works since remotecontrol class has a 'caster' inside of it
             clientManager.Send(mousePos);
         }
 
@@ -95,6 +93,7 @@ namespace TgenRemoter
             clientManager.Close();
             MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Close();
+            Application.Exit();
         }
 
         [ClientNetworkReciver]
@@ -106,15 +105,16 @@ namespace TgenRemoter
         [ClientNetworkReciver]
         public void GotNetworkFile(NetworkFile file)
         {
-            if(RemoteSettings.CanSendFiles)
-                Tools.UnpackFile(RemoteSettings.FolderPath, file);
+            if (!RemoteSettings.CanSendFiles) return;
+
+            Tools.UnpackFile(RemoteSettings.FolderPath, file);
+            FormTaskbarFlash.FlashWindowEx(this);
         }
 
         bool partnerAllowFiles;
         [ClientNetworkReciver]
         public void GotSettings(NetworkPartnerSettings partnerSettings)
         {
-            TgenLog.Log("This function ran, controlled");
             Console.WriteLine("Can send files? " + partnerSettings.AllowFiles);
             partnerAllowFiles = partnerSettings.AllowFiles;
         }

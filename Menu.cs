@@ -1,28 +1,40 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 using TgenNetProtocol;
+using TgenSerializer;
 
 namespace TgenRemoter
 {
     public partial class Menu : FormNetworkBehavour
     {
-        ServerManager serverManager;
         ClientManager clientManager;
-        int port = 7777; //7777
+        string ip = "127.0.0.1"; //Main server ip
+        int port = 7777; //Main server port
 
+        string myPass = string.Empty; //Will be filled later
 
-        bool AllowNetworkFiles { get => RemoteSettings.CanSendFiles; set => RemoteSettings.CanSendFiles = value; }
-        string FolderPath { get => RemoteSettings.FolderPath;  set => RemoteSettings.FolderPath = value; }
+        private void UpdateSettings()
+        {
+            try
+            {
+                string cfgFilePath = @".\settings.cfg"; //cfg == configurations, thanks Valve :)
+                using (FileStream settingsFileStream = new FileStream(cfgFilePath, FileMode.Create))
+                {
+                    RemoteSettingsObj obj = new RemoteSettingsObj(AllowNetworkFiles, FolderPath);
+                    TgenFormatter.Serialize(settingsFileStream, obj, FormatCompression.String);
+                }
+            }
+            catch (Exception)
+            {
+                //Don't take risks, the saving may fail. 
+                //In such case it's best to lose the settings file than the whole software
+            }
+        }
+
+        bool AllowNetworkFiles { get => RemoteSettings.CanSendFiles;  set { RemoteSettings.CanSendFiles = value; UpdateSettings(); } }
+        string FolderPath { get => RemoteSettings.FolderPath; set { RemoteSettings.FolderPath = value; UpdateSettings(); } }
         public Menu()
         {
             InitializeComponent();
@@ -32,40 +44,113 @@ namespace TgenRemoter
             TgenLog.Reset();
             FormClosed += Form1_FormClosed;
             clientManager = new ClientManager();
-            publicIpLabel.Text = "Public IP: " + clientManager.PublicIp;
-            localIpLabel.Text = "Local IP: " + clientManager.LocalIp;
-            portLabel.Text = "Port: " + port;
-            serverManager = new ServerManager(port);
+            clientManager.Connect(ip, port);
+            if (!clientManager.Connected)
+            {
+                MessageBox.Show("Could not connect to the main server!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Close();
+            }
 
-            this.MouseClick += Form1_MouseClick1;
+            CheckForSpace(); //Check if there's enough memory in the system for the program to function properly
 
-            TgenLog.Reset();
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
-            FolderPath = KnownFolders.GetPath(KnownFolder.Downloads);
-            AllowNetworkFiles = CheckFileTransformation.Checked;
+            //Don't take risks, the saving may fail. 
+            //In such case it's best to lose the settings file than the whole software
+            //Note: Remember they block many premissions at school
+            try
+            {
+                string cfgFilePath = @".\settings.cfg"; //cfg == configurations, thanks Valve :)
+                using (FileStream settingsFileStream = new FileStream(cfgFilePath, FileMode.OpenOrCreate))
+                {
+                    if (new FileInfo(cfgFilePath).Length == 0) //File empty, no save file
+                    {
+                        //Initiate default values
+                        bool defaultCanSendFile = CheckFileTransformation.Checked;
+                        string defaultFilesPath = KnownFolders.GetPath(KnownFolder.Downloads);
+
+                        RemoteSettingsObj obj = new RemoteSettingsObj(defaultCanSendFile, defaultFilesPath);
+                        TgenFormatter.Serialize(settingsFileStream, obj, FormatCompression.String);
+
+                        RemoteSettings.CanSendFiles = defaultCanSendFile;
+                        RemoteSettings.FolderPath = defaultFilesPath;
+                    }
+                    else
+                    {
+                        //Settings file has content, establish it
+                        RemoteSettingsObj settings = (RemoteSettingsObj)TgenFormatter.Deserialize(settingsFileStream, FormatCompression.String);
+
+                        RemoteSettings.FolderPath = settings.FolderPath;
+                        RemoteSettings.CanSendFiles = settings.CanSendFiles;
+
+                    }
+                }
+                CheckFileTransformation.Checked = RemoteSettings.CanSendFiles;
+            }
+            catch (Exception)
+            {
+                bool defaultCanSendFile = CheckFileTransformation.Checked;
+                string defaultFilesPath = KnownFolders.GetPath(KnownFolder.Downloads);
+
+                RemoteSettings.CanSendFiles = defaultCanSendFile;
+                RemoteSettings.FolderPath = defaultFilesPath;
+            }
         }
 
-        private void Form1_MouseClick1(object sender, MouseEventArgs e)
+        private void CheckForSpace()
         {
-            Console.WriteLine("CLICKING");
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            foreach (var driver in drives)
+            {
+                long gigaByte = 1000000000;
+                int requiredGigas = 5;
+                if (driver.AvailableFreeSpace < gigaByte * requiredGigas)
+                {
+                    string message = $"{driver.Name} has less than {requiredGigas} free gigabytes of memory.\n\n" +
+                        $"Such issue is crucial for the program and might result in unintentioned behaviour";
+                    MessageBox.Show(message, "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+        }
+
+        [ClientNetworkReciver]
+        public void GotEvent(NetworkCodes.PassCode codes)
+        {
+            string message = codes.passCode;
+            Console.WriteLine(message);
+
+            if (myPass == string.Empty)
+            {
+                myPass = message;
+                PassLabel.Text = "Code: " + myPass;
+                return;
+            }
+
+            if (message == "SuccessController") //You control someone else
+            {
+                Controller controllerForm = new Controller(clientManager);
+                controllerForm.Show();
+                Hide();
+                clientManager.Send(new NetworkMessages.RemoteStartedMessage());
+            }
+            else if (message == "SuccessControlled") //You are being controlled
+            {
+                Controlled controllerForm = new Controlled(clientManager);
+                controllerForm.Show();
+                Hide();
+            }
+            else
+            {
+                if (!this.Visible) return;
+                Console.WriteLine(message);
+                MessageBox.Show(message, "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            serverManager.Close();
             clientManager.Close();
             Application.Exit();
-        }
-
-        private void copyPublicIpButton_Click(object sender, EventArgs e) => Clipboard.SetText(clientManager.PublicIp);
-        private void copyLocalIpButton_Click(object sender, EventArgs e) => Clipboard.SetText(clientManager.LocalIp);
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (serverListenCheckBox.Checked)
-                serverManager.Start();
-            else
-                serverManager.Close();
         }
 
         private void Connect_Click(object sender, EventArgs e)
@@ -73,85 +158,14 @@ namespace TgenRemoter
             if (partnerIp.Text == "")
                 return;
 
-            serverListenCheckBox.Checked = false;
-            serverManager.Close();
-            bool connected = clientManager.Connect(partnerIp.Text, port);
-            Console.WriteLine(connected);
-            if (!connected)
-            {
-                MessageBox.Show("Wasn't able to connect", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //serverManager.Start();
-            }
-            else
-            {
-                Controller controllerForm = new Controller(clientManager);
-                controllerForm.Show();
-                Hide();
-                clientManager.Send(new NetworkMessages.RemoteStartedMessage());
-            }
-        }
-        /// <summary>
-        /// Function is called when a client connects
-        /// it starts the remote control connection
-        /// </summary>
-        /// <param name="a"></param>
-        [ServerNetworkReciver]
-        public void OnControllerConnected(NetworkMessages.RemoteStartedMessage a)
-        {
-            clientManager.Close();
-            Controlled controlledForm = new Controlled(serverManager);
-            controlledForm.Show();
-            //controlledForm.WindowState = FormWindowState.Minimized;
-            Hide();
+            clientManager.Send(new NetworkCodes.PassCode(partnerIp.Text));
         }
 
-        public void DiagnoseBitmap()
-        {
-            Rectangle bounds = Screen.GetBounds(Point.Empty);
-            Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
-            Graphics g = Graphics.FromImage(bitmap);
-            g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
-            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-
-            ISerializable serializable = bitmap;
-            SerializationInfo info = new SerializationInfo(serializable.GetType(), new FormatterConverter());
-            StreamingContext context = new StreamingContext(StreamingContextStates.All);
-            serializable.GetObjectData(info, context);
-            var Node = info.GetEnumerator();
-            Console.WriteLine(info.MemberCount);
-            byte[] data = null;
-            while (Node.MoveNext())
-            {
-                data = (byte[])Node.Value;
-                Console.WriteLine("Item: " + Node.Name + " Type: " + Node.ObjectType + " value? " + Node.Value);
-            }
-            Console.WriteLine(data is IEnumerable);
-            Console.WriteLine(data.Length);
-        }
-
-        #region Mouse Press Event
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-        private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
-        private const int MOUSEEVENTF_RIGHTUP = 0x10;
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-        public void DoMouseClick()
-        {
-            //Call the imported function with the cursor's current position
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
-        }
-        #endregion
 
         private void CheckFileTransformation_CheckedChanged(object sender, EventArgs e)
         {
             AllowNetworkFiles = CheckFileTransformation.Checked;
-            ButtonFilePath.Enabled = CheckFileTransformation.Checked;
+            FIiePathBtn.Enabled = CheckFileTransformation.Checked;
         }
 
         private void ButtonFilePath_Click(object sender, EventArgs e)
@@ -170,5 +184,32 @@ namespace TgenRemoter
                 }
             }
         }
+
+        private void FilesInfoBtn_Click(object sender, EventArgs e)
+        {
+            string message = $"You can use the '{FIiePathBtn.Text}' to choose where you want files that your partner sends " +
+                $"to be located. \n\n" +
+                $"If you don't want files to be transferred by the client simply uncheck " +
+                $"{CheckFileTransformation.Text}. \n\n" +
+                $"If your partner chose to enable file transformation, " +
+                $"simply drop the file you want to send into the window and the file will be sent " +
+                $"(If you partner enabled file transformation). \n\n" +
+                $"Would you like to receive files from your partner?";
+
+            DialogResult result = MessageBox.Show(message, "Note", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+            switch (result)
+            {
+                case DialogResult.Yes:
+                    CheckFileTransformation.Checked = true;
+                    break;
+                case DialogResult.No:
+                    CheckFileTransformation.Checked = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void CopyPassBtn_Click(object sender, EventArgs e) => Clipboard.SetText(myPass);
     }
 }
