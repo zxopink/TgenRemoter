@@ -26,14 +26,15 @@ namespace TgenRemoter
         }
 
         [ClientNetworkReciver]
-        public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized )
+        public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
         {
             clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
+            Tick.Enabled = true; //Start sharing screen
         }
 
         private void Controlled_FormClosed(object sender, FormClosedEventArgs e)
         {
-            clientManager.Send(new PartnerLeft());
+            //clientManager.Send(new PartnerLeft()); //Server handles that
             clientManager.Close();
             Application.Exit();
         }
@@ -41,12 +42,13 @@ namespace TgenRemoter
         [ClientNetworkReciver]
         public void OnMouseRecive(RemoteControlMousePos mousePoint)
         {
-            Cursor.Position = new Point((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width - 23), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height - 80));
+            Cursor.Position = new Point((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height));
         }
 
         [ClientNetworkReciver]
-        public void OnKeyboardRecive(RemoteControlKeyboard keyboardInput) => Console.WriteLine(keyboardInput.input); //keyboardInput.SignKey(); //CAUSES ISSUES RN
+        public void OnKeyboardRecive(RemoteControlKeyboard keyboardInput) => keyboardInput.SignKey();
 
+        /*
         [ClientNetworkReciver]
         public void OnMousePress(RemoteControlMousePress mousePress)
         {
@@ -62,8 +64,11 @@ namespace TgenRemoter
                     break;
                 default:
                     break;
-            }   
+            }
         }
+        */
+        [ClientNetworkReciver]
+        public void OnMousePress(RemoteControlMousePress mousePress) => mousePress.SignMouse();
 
         [ClientNetworkReciver]
         public void Disconnected(PartnerLeft a)
@@ -99,14 +104,14 @@ namespace TgenRemoter
 
         private void Tick_Tick(object sender, EventArgs e)
         {
-            Rectangle bounds = Screen.GetBounds(Point.Empty);
+            Rectangle bounds = Screen.PrimaryScreen.Bounds;
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
             Graphics g = Graphics.FromImage(bitmap);
             g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-            g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
+            g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             clientManager.Send(new RemoteControlFrame(bitmap), true);
         }
 

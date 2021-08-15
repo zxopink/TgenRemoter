@@ -37,7 +37,6 @@
             // 
             // Tick
             // 
-            this.Tick.Enabled = true;
             this.Tick.Interval = 33;
             this.Tick.Tick += new System.EventHandler(this.Tick_Tick);
             // 
@@ -49,7 +48,8 @@
             this.ScreenSharePictureBox.Size = new System.Drawing.Size(250, 250);
             this.ScreenSharePictureBox.TabIndex = 0;
             this.ScreenSharePictureBox.TabStop = false;
-            this.ScreenSharePictureBox.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ScreenSharePictureBox_MouseClick);
+            this.ScreenSharePictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ScreenSharePictureBox_MouseDown);
+            this.ScreenSharePictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ScreenSharePictureBox_MouseUp);
             // 
             // Controller
             // 

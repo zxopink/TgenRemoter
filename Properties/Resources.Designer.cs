@@ -59,15 +59,5 @@ namespace TgenRemoter.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap caricature_beginning_of_the_end {
-            get {
-                object obj = ResourceManager.GetObject("caricature_beginning-of-the-end", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

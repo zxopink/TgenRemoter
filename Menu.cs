@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.IO;
+using System.Net;
 using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenSerializer;
@@ -43,6 +44,14 @@ namespace TgenRemoter
         {
             TgenLog.Reset();
             FormClosed += Form1_FormClosed;
+
+            //Change target ip name to the file's name if the name is an ip
+            string exeName = Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName);
+            IPAddress ipAddress = null;
+            bool isValidIp = IPAddress.TryParse(exeName, out ipAddress);
+            if (isValidIp)
+                ip = exeName;
+
             clientManager = new ClientManager();
             clientManager.Connect(ip, port);
             if (!clientManager.Connected)
@@ -50,8 +59,15 @@ namespace TgenRemoter
                 MessageBox.Show("Could not connect to the main server!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Close();
             }
-
-            CheckForSpace(); //Check if there's enough memory in the system for the program to function properly
+            try
+            {
+                CheckForSpace(); //Check if there's enough memory in the system for the program to function properly
+            }
+            catch (Exception)
+            {
+                //No access to drivers, not a big deal
+            }
+            
 
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
 
@@ -79,10 +95,26 @@ namespace TgenRemoter
                     {
                         //Settings file has content, establish it
                         RemoteSettingsObj settings = (RemoteSettingsObj)TgenFormatter.Deserialize(settingsFileStream, FormatCompression.String);
+                        if (!Directory.Exists(settings.FolderPath)) //Target doesn't exist
+                        {
+                            //Report and get default values
+                            TgenLog.Log($"{settings.FolderPath} doesn't exist!");
+                            string defaultFilesPath = KnownFolders.GetPath(KnownFolder.Downloads);
+                            RemoteSettings.FolderPath = defaultFilesPath;
 
-                        RemoteSettings.FolderPath = settings.FolderPath;
+                            //Clean the settings file
+                            settingsFileStream.Close();
+                            File.WriteAllText(cfgFilePath, string.Empty);
+                            FileStream settingsCleanStream = new FileStream(cfgFilePath, FileMode.OpenOrCreate);
+
+                            //Write new settings file
+                            RemoteSettingsObj obj = new RemoteSettingsObj(settings.CanSendFiles, defaultFilesPath);
+                            TgenFormatter.Serialize(settingsCleanStream, obj, FormatCompression.String);
+                        }
+                        else //Is all good
+                            RemoteSettings.FolderPath = settings.FolderPath;
+
                         RemoteSettings.CanSendFiles = settings.CanSendFiles;
-
                     }
                 }
                 CheckFileTransformation.Checked = RemoteSettings.CanSendFiles;
@@ -97,13 +129,15 @@ namespace TgenRemoter
             }
         }
 
+        /// <exception cref="IOException">Thrown when an issue with the driver occurres</exception>
+        /// <exception cref="UnauthorizedAccessException">Thrown when there's no access to the driver</exception>
         private void CheckForSpace()
         {
             DriveInfo[] drives = DriveInfo.GetDrives();
             foreach (var driver in drives)
             {
                 long gigaByte = 1000000000;
-                int requiredGigas = 5;
+                int requiredGigas = 1;
                 if (driver.AvailableFreeSpace < gigaByte * requiredGigas)
                 {
                     string message = $"{driver.Name} has less than {requiredGigas} free gigabytes of memory.\n\n" +
@@ -131,7 +165,6 @@ namespace TgenRemoter
                 Controller controllerForm = new Controller(clientManager);
                 controllerForm.Show();
                 Hide();
-                clientManager.Send(new NetworkMessages.RemoteStartedMessage());
             }
             else if (message == "SuccessControlled") //You are being controlled
             {

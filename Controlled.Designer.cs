@@ -37,8 +37,6 @@
             // 
             // Tick
             // 
-            this.Tick.Enabled = true;
-            this.Tick.Interval = 33;
             this.Tick.Tick += new System.EventHandler(this.Tick_Tick);
             // 
             // pictureBox1

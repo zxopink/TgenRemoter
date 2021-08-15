@@ -7,7 +7,6 @@ C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\bin\Release\TgenNetProtocol.
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.csprojAssemblyReference.cache
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.Controlled.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.Controller.resources
-C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.Graphic_Tester.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.Properties.Resources.resources
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.csproj.GenerateResource.cache
 C:\Users\yoavh\source\repos\TgenRemoter\TgenRemoter\obj\Release\TgenRemoter.csproj.CopyComplete
