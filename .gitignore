@@ -9,6 +9,7 @@ obj/
 Source/Assembly-CSharp.csproj
 Source/Assembly-CSharp-Editor.csproj
 Source/Assembly-CSharp-firstpass.csproj
+Source/Source.sln
 *.pidb
 *.suo
 *.user
@@ -16,11 +17,12 @@ Source/Assembly-CSharp-firstpass.csproj
 *.booproj
 bin/
 .vs/
+.idea/
+*.nupkg
 TgenSerializer/
 TgenNetProtocol/
 TestDotNetCore/
-.idea/
-*.nupkg
+
 
 /packages
 
@@ -30,11 +32,6 @@ TestDotNetCore/
 *.gitattributes
 *.gitignore
 README.md
-
-
-# ============ #
-# OS generated #
-# ============ #
 
 # ============ #
 # OS generated #
