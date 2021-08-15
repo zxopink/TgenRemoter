@@ -32,6 +32,7 @@ The client side is a bit more complicated as it includes both a network layer an
 
 `Menu Window:`  
 The menu is the first window to pop up when a client opens the app, this window will only open if the client manages to open the main server to aquire a connection code.  
+
 The menu offers multiple setting options:  
 	`Accept sent files:` using a checkbox you can check whether you want to download files sent by your room partner or decline them.  
 	`File target:` If you decide to accept incoming files, you can choose in which folder to drop the incoming files.  
@@ -53,7 +54,7 @@ This window is small and boardless, it doesn't accept any input from the user ex
 
 `File Sharing:`  
 File works in both windows, to share a file the user simply needs to drag and drop the file into the form.
-In case the user's partner has disabled file sharing in the settings, the user will be notified.
+In case the user's partner has disabled file sharing in the settings, the user will be notified.  
 * File sharing also works with folders.
 
 notes
