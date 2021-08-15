@@ -36,7 +36,7 @@ The menu is the first window to pop up when a client opens the app, this window 
 The menu offers multiple setting options:  
 &nbsp;&nbsp;&nbsp;`Accept sent files:` using a checkbox you can check whether you want to download files sent by your room partner or decline them.  
 &nbsp;&nbsp;&nbsp;`File target:` If you decide to accept incoming files, you can choose in which folder to drop the incoming files.  
-&nbsp;&nbsp;&nbsp;* Settings are saved in a configurations folder
+&nbsp;&nbsp;&nbsp;- Settings are saved in a configurations folder
 
 
 `Controller Window:`   
