@@ -26,6 +26,14 @@ TestDotNetCore/
 /packages
 
 # ============ #
+# Github generated #
+# ============ #
+*.gitattributes
+*.gitignore
+README.md
+
+
+# ============ #
 # OS generated #
 # ============ #
 
