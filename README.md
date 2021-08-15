@@ -2,9 +2,9 @@
 basically a TeamViewer app based on my protocol (TgenNetProtocol)  
 
 The remoter's special features are:  
-* instances remote control  
-* drag and drop file sharing  
-* input control over clients  
+* Instances remote control  
+* Drag and drop file sharing  
+* Input control between clients  
 
 This Remoter is made to heavily test the 'TgenNetProtocol' network layer and the serializer.  
 The Remoter depends on the Tgen libraries, it must be referenced to the 'TgenNetProtocol' and 'TgenSerializer' DLLs to compile.  
@@ -20,10 +20,10 @@ once a user types another user's code, the server will make a new room for both 
 note that a server can host multiple rooms.  
 
 * The server is a dedicated server  
-* it accepts incoming client  
-* hands incoming clients a connection code  
-* pairs two clients into a room  
-* and manages the communication between the clients.  
+* It accepts incoming client  
+* It hands incoming clients a connection code  
+* It pairs two clients into a room  
+* And It manages the communication between the clients.  
 
 client side
 --------------------------------------------------------------------------------------------------------------------------------
@@ -35,13 +35,14 @@ The menu is the first window to pop up when a client opens the app, this window 
 The menu offers multiple setting options:  
 	`Accept sent files`: using a checkbox you can check whether you want to download files sent by your room partner or decline them.  
 	`File target`: If you decide to accept incoming files, you can choose in which folder to drop the incoming files.  
-	* The settings are saved in a configurations folder
+	* Settings are saved in a configurations folder
 
 `Controller Window:`   
 The controller window open once you write in another user's connection code and press the 'Connect' button in the menu.  
 This window displays the other user's screen.  
 
-while the controller's cursor is inside the window, every keyboard and mouse input signed in will be sent to the controlled user.
+while the controller's cursor is inside the window,  
+every keyboard and mouse input signed in will be sent to the controlled user.
 
 `Controlled Window:`  
 The controller menu opens up when when another user who's connected to the dedicated server signs in your connection code and connects.
