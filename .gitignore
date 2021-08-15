@@ -31,7 +31,6 @@ TestDotNetCore/
 # ============ #
 *.gitattributes
 *.gitignore
-README.md
 
 # ============ #
 # OS generated #
