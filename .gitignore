@@ -9,7 +9,6 @@ obj/
 Source/Assembly-CSharp.csproj
 Source/Assembly-CSharp-Editor.csproj
 Source/Assembly-CSharp-firstpass.csproj
-Source/Source.sln
 *.pidb
 *.suo
 *.user
