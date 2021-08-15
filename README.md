@@ -1,15 +1,15 @@
 # TgenRemoter
 basically a TeamViewer app based on my protocol (TgenNetProtocol)  
 
+The remoter's special features are:<br/> 
+instances remote control,<br/>
+drag and drop file sharing,<br/>
+input control over clients<br/>
+
 This Remoter is made to heavily test the 'TgenNetProtocol' network layer and the serializer.  
 The Remoter depends on the Tgen libraries, it must be referenced to the 'TgenNetProtocol' and 'TgenSerializer' DLLs to compile.  
 
 The remoter has 2 sides, the server side and client side; both sides will be explained below:  
-
-The remoter's special features are:  
-instances remote control,  
-drag and drop file sharing,  
-input control over clients  
 
 server side
 --------------------------------------------------------------------------------------------------------------------------------
