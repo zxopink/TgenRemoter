@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29905.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoter", "TgenRemoter\TgenRemoter.csproj", "{87B709F4-71C5-47E1-B556-960A5AD53717}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenSerializer", "..\TgenSerializer\TgenSerializer\TgenSerializer.csproj", "{0902C51A-DF9D-4908-911E-5D74518D29BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenNetProtocol", "..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj", "{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoterServerApp", "TgenRemoterServerApp\TgenRemoterServerApp.csproj", "{F623914F-B54D-4FB5-AB48-9940890C5218}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87B709F4-71C5-47E1-B556-960A5AD53717}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B709F4-71C5-47E1-B556-960A5AD53717}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B709F4-71C5-47E1-B556-960A5AD53717}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B709F4-71C5-47E1-B556-960A5AD53717}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0902C51A-DF9D-4908-911E-5D74518D29BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0902C51A-DF9D-4908-911E-5D74518D29BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0902C51A-DF9D-4908-911E-5D74518D29BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0902C51A-DF9D-4908-911E-5D74518D29BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F623914F-B54D-4FB5-AB48-9940890C5218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F623914F-B54D-4FB5-AB48-9940890C5218}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F623914F-B54D-4FB5-AB48-9940890C5218}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F623914F-B54D-4FB5-AB48-9940890C5218}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FAF3820D-5E75-4CFF-AB22-9794FFB9901A}
+	EndGlobalSection
+EndGlobal
