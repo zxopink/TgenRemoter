@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenSerializer", "..\TgenSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenNetProtocol", "..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj", "{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoterServerApp", "TgenRemoterServerApp\TgenRemoterServerApp.csproj", "{F623914F-B54D-4FB5-AB48-9940890C5218}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoterServerSide", "TgenRemoterServerApp\TgenRemoterServerSide.csproj", "{F623914F-B54D-4FB5-AB48-9940890C5218}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
