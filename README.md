@@ -1,36 +1,37 @@
 # TgenRemoter
-basically a TeamViewer app based on my protocol (TgenNetProtocol)
+basically a TeamViewer app based on my protocol (TgenNetProtocol)  
 
-This Remoter is made to heavily test the 'TgenNetProtocol' network layer and the serializer.
-The Remoter depends on the Tgen libraries, it must be referenced to the 'TgenNetProtocol' and 'TgenSerializer' DLLs to compile.
+This Remoter is made to heavily test the 'TgenNetProtocol' network layer and the serializer.  
+The Remoter depends on the Tgen libraries, it must be referenced to the 'TgenNetProtocol' and 'TgenSerializer' DLLs to compile.  
 
-The remoter has 2 sides, the server side and client side; both sides will be explained below:
+The remoter has 2 sides, the server side and client side; both sides will be explained below:  
 
-The remoter's special features are:
-instances remote control,
-drag and drop file sharing,
-input control over clients
+The remoter's special features are:  
+instances remote control,  
+drag and drop file sharing,  
+input control over clients  
 
 server side
 --------------------------------------------------------------------------------------------------------------------------------
-The server side is quite simple, it's a console app that runs in a single thread.
-The thread uses the "[TgenNetProtocol]" layer to incoming clients and sort their packets.
-The server hands each new client a special 'connection' code which can be used by other clients to connect and control the said client.
-once a user types another user's code, the server will make a new room for both clients and exchange the packets between the two.
-note that a server can host multiple rooms.
+The server side is quite simple, it's a console app that runs in a single thread.  
+The thread uses the "[TgenNetProtocol]" layer to incoming clients and sort their packets.  
+The server hands each new client a special 'connection' code which can be used by other clients to connect and control the said client.  
+once a user types another user's code, the server will make a new room for both clients and exchange the packets between the two.  
+note that a server can host multiple rooms.  
 
-The server is a dedicated server, 
-it accepts incoming client,
-hands incoming clients a connection code, 
-pairs two clients into a room
-and manages the communication between the clients.
+The server is a dedicated server,  
+it accepts incoming client,  
+hands incoming clients a connection code,  
+pairs two clients into a room  
+and manages the communication between the clients.  
 
 client side
 --------------------------------------------------------------------------------------------------------------------------------
 
-The client side is a bit more complicated as it includes both a network layer and a GUI layer with several different windows.
+The client side is a bit more complicated as it includes both a network layer and a GUI layer with several different windows.  
+
 `Menu Window`:
-The menu is the first window to pop up when a client opens the app, this window will only open if the client manages to open the main server to aquire a connection code.
+The menu is the first window to pop up when a client opens the app, this window will only open if the client manages to open the main server to aquire a connection code.  
 The menu offers multiple settings options
 
 `send a message`:
