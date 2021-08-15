@@ -33,7 +33,6 @@ The client side is a bit more complicated as it includes both a network layer an
 `Menu Window:`  
 The menu is the first window to pop up when a client opens the app, this window will only open if the client manages to open the main server to aquire a connection code.  
 The menu offers multiple setting options:  
-
 	`Accept sent files:` using a checkbox you can check whether you want to download files sent by your room partner or decline them.  
 	`File target:` If you decide to accept incoming files, you can choose in which folder to drop the incoming files.  
 	* Settings are saved in a configurations folder
