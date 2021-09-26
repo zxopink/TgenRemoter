@@ -25,7 +25,7 @@ namespace TgenRemoter
             clientManager.Send(new ConnectionIntializedEvent());
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
         {
             clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
@@ -39,13 +39,13 @@ namespace TgenRemoter
             Application.Exit();
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void OnMouseRecive(RemoteControlMousePos mousePoint)
         {
             Cursor.Position = new Point((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height));
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void OnKeyboardRecive(RemoteControlKeyboard keyboardInput) => keyboardInput.SignKey();
 
         /*
@@ -67,10 +67,10 @@ namespace TgenRemoter
             }
         }
         */
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void OnMousePress(RemoteControlMousePress mousePress) => mousePress.SignMouse();
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void Disconnected(PartnerLeft a)
         {
             clientManager.Close();
@@ -116,13 +116,13 @@ namespace TgenRemoter
         }
 
         bool partnerAllowFiles;
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void GotSettings(NetworkPartnerSettings partnerSettings)
         {
             partnerAllowFiles = partnerSettings.AllowFiles;
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void GotNetworkFiles(NetworkFile file)
         {
             if (!RemoteSettings.CanSendFiles) return;

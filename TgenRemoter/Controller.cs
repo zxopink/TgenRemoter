@@ -138,7 +138,7 @@ namespace TgenRemoter
             ShareMousePos();
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void Disconnected(PartnerLeft a)
         {
             clientManager.Close();
@@ -147,13 +147,13 @@ namespace TgenRemoter
             Application.Exit();
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void OnScreenFrameRecive(RemoteControlFrame Frame)
         {
             ScreenSharePictureBox.BackgroundImage = Frame;
         }
 
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void GotNetworkFile(NetworkFile file)
         {
             if (!RemoteSettings.CanSendFiles) return;
@@ -163,13 +163,13 @@ namespace TgenRemoter
         }
 
         bool partnerAllowFiles;
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void GotSettings(NetworkPartnerSettings partnerSettings)
         {
             Console.WriteLine("Can send files? " + partnerSettings.AllowFiles);
             partnerAllowFiles = partnerSettings.AllowFiles;
         }
-        [ClientNetworkReciver]
+        [ClientReceiver]
         public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
         {
             clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));

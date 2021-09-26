@@ -12,7 +12,8 @@ namespace TgenRemoterServer
         {
             private string code;
             public string Code { get => code; }
-            public bool inRoom;
+            public bool ready; //Is handle ready
+            public bool inRoom; //Is in room with another client
             ClientData ClientData;
             public Client partner;
             public Client(string code, ClientData data)
@@ -59,7 +60,6 @@ namespace TgenRemoterServer
                 server.Send(new NetworkMessages.PartnerLeft(), sender.partner);
                 Console.WriteLine("and left client: " + sender.partner.Code);
             }
-
         }
 
         private string GetCode(ClientData client)
@@ -76,7 +76,7 @@ namespace TgenRemoterServer
             clients.Add(newClient);
         }
 
-        [ServerNetworkReciver]
+        [ServerReceiver]
         public void GetPassCode(NetworkCodes.PassCode pass, ClientData senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
@@ -88,11 +88,12 @@ namespace TgenRemoterServer
                     client.partner = sender;
                     sender.partner = client;
 
-                    client.inRoom = true;
-                    sender.inRoom = true;
-
                     server.Send(new NetworkCodes.PassCode("SuccessController"), sender);
                     server.Send(new NetworkCodes.PassCode("SuccessControlled"), client);
+
+                    //Wait for 'ConnectionIntializedEvent' (for the forms to be created)
+                    //client.inRoom = true;
+                    //sender.inRoom = true;
 
                     Console.WriteLine($"Client {sender} has connected to client {client}");
                     return;
@@ -101,7 +102,25 @@ namespace TgenRemoterServer
             server.Send(new NetworkCodes.PassCode("Failed to find partner"), sender);
         }
 
-        [ServerNetworkReciver]
+        [ServerReceiver]
+        public void GetPassCode(NetworkMessages.ConnectionIntializedEvent obj, ClientData senderData)
+        {
+            Client sender = Client.GetClientByData(senderData, clients);
+            sender.ready = true;
+
+            Client partner = sender.partner;
+
+            if (sender.partner.ready)
+            {
+                sender.inRoom = true;
+                partner.inRoom = true;
+            }
+
+            server.Send(new NetworkMessages.ConnectionIntializedEvent(), sender);
+            server.Send(new NetworkMessages.ConnectionIntializedEvent(), partner);
+        }
+
+        [ServerReceiver]
         public void GetPassCode(object obj, ClientData senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);

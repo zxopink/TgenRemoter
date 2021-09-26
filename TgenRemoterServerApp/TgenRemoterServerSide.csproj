@@ -44,9 +44,6 @@
     <Reference Include="TgenNetProtocol">
       <HintPath>..\..\TgenNetProtocol\TgenNetProtocol\bin\Debug\TgenNetProtocol.dll</HintPath>
     </Reference>
-    <Reference Include="TgenSerializer">
-      <HintPath>..\..\TgenSerializer\TgenSerializer\bin\Debug\TgenSerializer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
