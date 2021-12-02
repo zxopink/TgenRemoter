@@ -24,7 +24,7 @@ namespace TgenRemoter
                 using (FileStream settingsFileStream = new FileStream(cfgFilePath, FileMode.Create))
                 {
                     RemoteSettingsObj obj = new RemoteSettingsObj(AllowNetworkFiles, FolderPath);
-                    Formatter.Serialize(settingsFileStream, obj, FormatCompression.String);
+                    Formatter.Serialize(settingsFileStream, obj, CompressionFormat.String);
                 }
             }
             catch (Exception)
@@ -86,7 +86,7 @@ namespace TgenRemoter
                         string defaultFilesPath = KnownFolders.GetPath(KnownFolder.Downloads);
 
                         RemoteSettingsObj obj = new RemoteSettingsObj(defaultCanSendFile, defaultFilesPath);
-                        Formatter.Serialize(settingsFileStream, obj, FormatCompression.String);
+                        Formatter.Serialize(settingsFileStream, obj, CompressionFormat.String);
 
                         RemoteSettings.CanSendFiles = defaultCanSendFile;
                         RemoteSettings.FolderPath = defaultFilesPath;
@@ -94,7 +94,7 @@ namespace TgenRemoter
                     else
                     {
                         //Settings file has content, establish it
-                        RemoteSettingsObj settings = (RemoteSettingsObj)Formatter.Deserialize(settingsFileStream, FormatCompression.String);
+                        RemoteSettingsObj settings = (RemoteSettingsObj)Formatter.Deserialize(settingsFileStream, CompressionFormat.String);
                         if (!Directory.Exists(settings.FolderPath)) //Target doesn't exist
                         {
                             //Report and get default values
@@ -109,7 +109,7 @@ namespace TgenRemoter
 
                             //Write new settings file
                             RemoteSettingsObj obj = new RemoteSettingsObj(settings.CanSendFiles, defaultFilesPath);
-                            Formatter.Serialize(settingsCleanStream, obj, FormatCompression.String);
+                            Formatter.Serialize(settingsCleanStream, obj, CompressionFormat.String);
                         }
                         else //Is all good
                             RemoteSettings.FolderPath = settings.FolderPath;
