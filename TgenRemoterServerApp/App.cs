@@ -103,7 +103,7 @@ namespace TgenRemoterServer
         }
 
         [ServerReceiver]
-        public void GetPassCode(NetworkMessages.ConnectionIntializedEvent obj, ClientData senderData)
+        public void InitializeConnection(NetworkMessages.ConnectionIntializedEvent obj, ClientData senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
             sender.ready = true;
@@ -112,12 +112,12 @@ namespace TgenRemoterServer
 
             if (sender.partner.ready)
             {
+                server.Send(new NetworkMessages.ConnectionIntializedEvent(), sender);
+                server.Send(new NetworkMessages.ConnectionIntializedEvent(), partner);
+
                 sender.inRoom = true;
                 partner.inRoom = true;
             }
-
-            server.Send(new NetworkMessages.ConnectionIntializedEvent(), sender);
-            server.Send(new NetworkMessages.ConnectionIntializedEvent(), partner);
         }
 
         [ServerReceiver]
