@@ -29,7 +29,7 @@ namespace TgenRemoter
             }
             catch (Exception)
             {
-                //Don't take risks, the saving may fail. 
+                //Don't take risks, the saving may fail.
                 //In such case it's best to lose the settings file than the whole software
             }
         }

@@ -13,6 +13,8 @@ public static class FormTaskbarFlash
     //Flash both the window caption and taskbar button.
     //This is equivalent to setting the FLASHW_CAPTION | FLASHW_TRAY flags. 
     public const UInt32 FLASHW_ALL = 3;
+    //Flash the taskbar button.
+    public const UInt32 FLASHW_TRAY = 2;
 
     // Flash continuously until the window comes to the foreground. 
     public const UInt32 FLASHW_TIMERNOFG = 12;
@@ -27,6 +29,21 @@ public static class FormTaskbarFlash
         public UInt32 dwTimeout;
     }
 
+    public static bool FlashWindowEx(Form form)
+    {
+        IntPtr hWnd = form.Handle;
+        FLASHWINFO fInfo = new FLASHWINFO();
+
+        fInfo.cbSize = Convert.ToUInt32(Marshal.SizeOf(fInfo));
+        fInfo.hwnd = hWnd;
+        fInfo.dwFlags = FLASHW_TRAY;
+        fInfo.uCount = 3;
+        fInfo.dwTimeout = 2;
+
+        return FlashWindowEx(ref fInfo);
+    }
+
+    /*Old default flashing, we want a different effect for files
     // Do the flashing - this does not involve a raincoat.
     public static bool FlashWindowEx(Form form)
     {
@@ -41,4 +58,5 @@ public static class FormTaskbarFlash
 
         return FlashWindowEx(ref fInfo);
     }
+    */
 }

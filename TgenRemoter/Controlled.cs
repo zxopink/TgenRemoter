@@ -25,9 +25,17 @@ namespace TgenRemoter
             clientManager.Send(new ConnectionIntializedEvent());
         }
 
+        /// <summary>True if already received ConnectionIntializedEvent once</summary>
+        bool Initialized = false;
         [ClientReceiver]
         public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
         {
+            if (Initialized)
+                return;
+
+            Initialized = true;
+            //Send again if the first call was sent too early
+            clientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
             clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
             Tick.Enabled = true; //Start sharing screen
         }

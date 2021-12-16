@@ -54,6 +54,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TgenSerializer\TgenSerializer\TgenSerializer.csproj">
+      <Project>{0902C51A-DF9D-4908-911E-5D74518D29BC}</Project>
+      <Name>TgenSerializer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TgenRemoter\TgenRemoter.csproj">
       <Project>{87b709f4-71c5-47e1-b556-960a5ad53717}</Project>
       <Name>TgenRemoter</Name>

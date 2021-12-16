@@ -14,22 +14,22 @@ namespace TgenRemoterServer
             public string Code { get => code; }
             public bool ready; //Is handle ready
             public bool inRoom; //Is in room with another client
-            ClientData ClientData;
+            ClientInfo ClientData;
             public Client partner;
-            public Client(string code, ClientData data)
+            public Client(string code, ClientInfo data)
             {
                 this.code = code;
                 ClientData = data;
                 inRoom = false;
             }
 
-            public static implicit operator ClientData(Client client) => client.ClientData;
+            public static implicit operator ClientInfo(Client client) => client.ClientData;
             public override string ToString()
             {
                 return ClientData.ToString();
             }
 
-            public static Client GetClientByData(ClientData data, List<Client> clients)
+            public static Client GetClientByData(ClientInfo data, List<Client> clients)
             {
                 foreach (var client in clients)
                 {
@@ -51,7 +51,7 @@ namespace TgenRemoterServer
             Console.WriteLine($"Local ip: {server.LocalIp} and port: {7777}");
         }
 
-        private void Server_ClientDisconnectedEvent(ClientData client)
+        private void Server_ClientDisconnectedEvent(ClientInfo client)
         {
             Client sender = Client.GetClientByData(client, clients);
             Console.Write(sender.Code + " has disconnected");
@@ -62,13 +62,13 @@ namespace TgenRemoterServer
             }
         }
 
-        private string GetCode(ClientData client)
+        private string GetCode(ClientInfo client)
         {
             int rnd = new Random().Next(100, 999);
             return rnd.ToString() + "-" + client.id.ToString();
         }
 
-        private void Server_ClientConnectedEvent(ClientData client)
+        private void Server_ClientConnectedEvent(ClientInfo client)
         {
             string code = GetCode(client);
             server.Send(new NetworkCodes.PassCode(code), client);
@@ -77,7 +77,7 @@ namespace TgenRemoterServer
         }
 
         [ServerReceiver]
-        public void GetPassCode(NetworkCodes.PassCode pass, ClientData senderData)
+        public void GetPassCode(NetworkCodes.PassCode pass, ClientInfo senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
             for (int i = 0; i < clients.Count; i++)
@@ -103,7 +103,7 @@ namespace TgenRemoterServer
         }
 
         [ServerReceiver]
-        public void InitializeConnection(NetworkMessages.ConnectionIntializedEvent obj, ClientData senderData)
+        public void InitializeConnection(NetworkMessages.ConnectionIntializedEvent obj, ClientInfo senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
             sender.ready = true;
@@ -121,7 +121,7 @@ namespace TgenRemoterServer
         }
 
         [ServerReceiver]
-        public void GetPassCode(object obj, ClientData senderData)
+        public void GetPassCode(object obj, ClientInfo senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
             if (!sender.inRoom) return;
