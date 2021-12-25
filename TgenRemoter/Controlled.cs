@@ -10,11 +10,14 @@ namespace TgenRemoter
     using static NetworkMessages;
     public partial class Controlled : FormNetworkBehavour
     {
-        ClientManager clientManager;
-        public Controlled(ClientManager clientManager)
+        ClientManager ClientManager { get; set; }
+        UdpManager Partner { get; set; }
+        public Controlled(ClientManager clientManager, UdpManager partner)
         {
             InitializeComponent();
-            this.clientManager = clientManager;
+            ClientManager = clientManager;
+            Partner = partner;
+            Partner.Listen();
         }
 
         private void Controlled_Load(object sender, EventArgs e)
@@ -22,7 +25,7 @@ namespace TgenRemoter
             AllowDrop = true;
             FormClosed += Controlled_FormClosed;
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            clientManager.Send(new ConnectionIntializedEvent());
+            ClientManager.Send(new ConnectionIntializedEvent(Partner.LocalEP));
         }
 
         /// <summary>True if already received ConnectionIntializedEvent once</summary>
@@ -34,26 +37,27 @@ namespace TgenRemoter
                 return;
 
             Initialized = true;
+            Partner.Connect(connectionIntialized.partnerEP);
             //Send again if the first call was sent too early
-            clientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
-            clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
+            //ClientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
+            ClientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
             Tick.Enabled = true; //Start sharing screen
         }
 
         private void Controlled_FormClosed(object sender, FormClosedEventArgs e)
         {
             //clientManager.Send(new PartnerLeft()); //Server handles that
-            clientManager.Close();
+            ClientManager.Close();
             Application.Exit();
         }
 
-        [ClientReceiver]
+        [DgramReceiver]
         public void OnMouseRecive(RemoteControlMousePos mousePoint)
         {
             Cursor.Position = new Point((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height));
         }
 
-        [ClientReceiver]
+        [DgramReceiver]
         public void OnKeyboardRecive(RemoteControlKeyboard keyboardInput) => keyboardInput.SignKey();
 
         /*
@@ -75,13 +79,13 @@ namespace TgenRemoter
             }
         }
         */
-        [ClientReceiver]
+        [DgramReceiver]
         public void OnMousePress(RemoteControlMousePress mousePress) => mousePress.SignMouse();
 
         [ClientReceiver]
         public void Disconnected(PartnerLeft a)
         {
-            clientManager.Close();
+            ClientManager.Close();
             MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Close();
             Application.Exit();
@@ -116,11 +120,12 @@ namespace TgenRemoter
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
             Graphics g = Graphics.FromImage(bitmap);
             g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
-            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
-            clientManager.Send(new RemoteControlFrame(bitmap), true);
+            //A single frame can get as big as ~200,000 bytes
+            Partner.Send(new RemoteControlFrame(bitmap));
         }
 
         bool partnerAllowFiles;
@@ -130,6 +135,7 @@ namespace TgenRemoter
             partnerAllowFiles = partnerSettings.AllowFiles;
         }
 
+        //TODO: figure out what to do here
         [ClientReceiver]
         public void GotNetworkFiles(NetworkFile file)
         {
@@ -159,7 +165,7 @@ namespace TgenRemoter
             }
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) clientManager.Send(Tools.PackFile(file));
+            foreach (string file in files) ClientManager.Send(Tools.PackFile(file));
         }
     }
 }

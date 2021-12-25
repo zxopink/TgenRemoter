@@ -13,6 +13,7 @@ namespace TgenRemoter
         ClientManager clientManager;
         string ip = "127.0.0.1"; //Main server ip
         int port = 7777; //Main server port
+        int udpPort = 7788; //port to partner
 
         string myPass = string.Empty; //Will be filled later
 
@@ -162,13 +163,15 @@ namespace TgenRemoter
 
             if (message == "SuccessController") //You control someone else
             {
-                Controller controllerForm = new Controller(clientManager);
+                var con2Partner = new UdpManager(udpPort);
+                Controller controllerForm = new Controller(clientManager, con2Partner);
                 controllerForm.Show();
                 Hide();
             }
             else if (message == "SuccessControlled") //You are being controlled
             {
-                Controlled controllerForm = new Controlled(clientManager);
+                var con2Partner = new UdpManager(udpPort + 1); //+1 for testing sake to not have to ports bound to the same port on same computer
+                Controlled controllerForm = new Controlled(clientManager, con2Partner);
                 controllerForm.Show();
                 Hide();
             }

@@ -10,18 +10,20 @@ namespace TgenRemoter
     using static NetworkMessages;
     public partial class Controller : FormNetworkBehavour
     {
-        ClientManager clientManager;
-        public Controller(ClientManager clientManager)
+        ClientManager ClientManager { get; set; }
+        UdpManager Partner { get; set; }
+        public Controller(ClientManager clientManager, UdpManager partner)
         {
             InitializeComponent();
-            this.clientManager = clientManager;
+            ClientManager = clientManager;
+            Partner = partner;
+            partner.Listen();
         }
 
         private void Controller_Load(object sender, EventArgs e)
         {
             FormClosed += Controller_FormClosed;
             AllowDrop = true;
-            Tick.Enabled = true;
 
             ScreenSharePictureBox.Location = Point.Empty;
             ScreenSharePictureBox.Width = ClientRectangle.Width;
@@ -30,7 +32,7 @@ namespace TgenRemoter
             ScreenSharePictureBox.MouseWheel += ScreenSharePictureBox_MouseWheel;
 
             SizeChanged += Controller_SizeChanged;
-            clientManager.Send(new ConnectionIntializedEvent());
+            ClientManager.Send(new ConnectionIntializedEvent(Partner.LocalEP));
         }
 
         #region CursorController
@@ -39,13 +41,13 @@ namespace TgenRemoter
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    clientManager.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftDown));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftDown));
                     break;
                 case MouseButtons.Middle:
-                    clientManager.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleDown));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleDown));
                     break;
                 case MouseButtons.Right:
-                    clientManager.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightDown));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightDown));
                     break;
                 case MouseButtons.None:
                     break;
@@ -63,13 +65,13 @@ namespace TgenRemoter
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    clientManager.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftUp));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftUp));
                     break;
                 case MouseButtons.Middle:
-                    clientManager.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleUp));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleUp));
                     break;
                 case MouseButtons.Right:
-                    clientManager.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightUp));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightUp));
                     break;
                 case MouseButtons.None:
                     break;
@@ -82,7 +84,7 @@ namespace TgenRemoter
             }
         }
 
-        private void ScreenSharePictureBox_MouseWheel(object sender, MouseEventArgs e) => clientManager.Send(new RemoteControlMousePress(e.Delta));
+        private void ScreenSharePictureBox_MouseWheel(object sender, MouseEventArgs e) => Partner.Send(new RemoteControlMousePress(e.Delta));
 
         /// <summary>
         /// Called every tick
@@ -99,7 +101,7 @@ namespace TgenRemoter
 
             RemoteControlMousePos mousePos = new RemoteControlMousePos(xPos, yPos);
 
-            clientManager.Send(mousePos);
+            Partner.Send(mousePos);
         }
 
         private void Controller_KeyDown(object sender, KeyEventArgs e)
@@ -116,7 +118,7 @@ namespace TgenRemoter
             input.alt = e.Alt;
             input.shift = e.Shift;
 
-            clientManager.Send(input);
+            Partner.Send(input);
         }
     #endregion
 
@@ -129,7 +131,8 @@ namespace TgenRemoter
         private void Controller_FormClosed(object sender, FormClosedEventArgs e)
         {
             //clientManager.Send(new PartnerLeft()); //Server handles that
-            clientManager.Close();
+            ClientManager.Close();
+            Partner.Close();
             Application.Exit();
         }
 
@@ -141,13 +144,14 @@ namespace TgenRemoter
         [ClientReceiver]
         public void Disconnected(PartnerLeft a)
         {
-            clientManager.Close();
+            ClientManager.Close();
+            Partner.Close();
             MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Close();
             Application.Exit();
         }
 
-        [ClientReceiver]
+        [DgramReceiver]
         public void OnScreenFrameRecive(RemoteControlFrame Frame)
         {
             ScreenSharePictureBox.BackgroundImage = Frame;
@@ -179,9 +183,10 @@ namespace TgenRemoter
                 return;
 
             Initialized = true;
+            Partner.Connect(connectionIntialized.partnerEP);
             //Send again if the first call was sent too early
-            clientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
-            clientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
+            //ClientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
+            ClientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
             Tick.Enabled = true; //Start control
         }
 
@@ -205,7 +210,7 @@ namespace TgenRemoter
             }
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) clientManager.Send(Tools.PackFile(file));
+            foreach (string file in files) ClientManager.Send(Tools.PackFile(file));
         }
     }
 }

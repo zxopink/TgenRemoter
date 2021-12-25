@@ -18,7 +18,19 @@ namespace TgenRemoter
         public class RemoteStartedMessage { }
 
         [Serializable]
-        public class ConnectionIntializedEvent { }
+        public class ConnectionIntializedEvent 
+        {
+            public NetworkCodes.NetworkEndPoint partnerEP;
+            public ConnectionIntializedEvent()
+            {
+                
+            }
+
+            public ConnectionIntializedEvent(NetworkCodes.NetworkEndPoint EP)
+            {
+                partnerEP = EP;
+            }
+        }
 
         [Serializable]
         public class NetworkPartnerSettings {
@@ -206,12 +218,59 @@ namespace TgenRemoter
             public static implicit operator RemoteControlFrame(Bitmap frame) => new RemoteControlFrame(frame);
             public static implicit operator Bitmap(RemoteControlFrame imageData) => FromBytes(imageData.frameData);
 
-            private static byte[] ToByteArray(Image image, ImageFormat format)
+            private static byte[] ToByteArray(Bitmap image, ImageFormat format)
             {
+                const int maxSize = ushort.MaxValue - 29;
+                for (long quality = 15L; quality >= 0L; quality -= 5L)
+                {
+                    long size;
+                    byte[] bitMap = TryCompressBitmap(image, quality, maxSize, out size);
+                    if (bitMap == null)
+                        TgenNetProtocol.TgenLog.Log("Frame is too big: " + size + " attempting to go down on quality with: " + quality);
+                    else
+                        return bitMap;
+                }
+                throw new Exception("Frame can't be compressed under " + ushort.MaxValue + " bytes");
+
+                /* Old message sending, non compression
                 using (MemoryStream ms = new MemoryStream())
                 {
                     image.Save(ms, format);
-                    return ms.ToArray();
+                    var arr = ms.ToArray();
+                    if (arr.Length > ushort.MaxValue - 100)
+                        TgenNetProtocol.TgenLog.Log("Frame is too big to send: " + arr.Length);
+                    return arr;
+                }
+                */
+            }
+
+            private static byte[] GetCompressedBitmap(Bitmap bmp, long quality)
+            {
+                using (var mss = new MemoryStream())
+                {
+                    EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                    ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
+                    EncoderParameters parameters = new EncoderParameters(1);
+                    parameters.Param[0] = qualityParam;
+                    bmp.Save(mss, imageCodec, parameters);
+                    return mss.ToArray();
+                }
+            }
+
+            /// <returns>Null if the byte array length is bigger than length</returns>
+            private static byte[] TryCompressBitmap(Bitmap bmp, long quality, long length, out long size)
+            {
+                using (var mss = new MemoryStream())
+                {
+                    EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                    ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
+                    EncoderParameters parameters = new EncoderParameters(1);
+                    parameters.Param[0] = qualityParam;
+                    bmp.Save(mss, imageCodec, parameters);
+                    size = mss.Length;
+                    if (mss.Length > length)
+                        return null;
+                    return mss.ToArray();
                 }
             }
 

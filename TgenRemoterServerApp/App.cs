@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using TgenNetProtocol;
 using TgenRemoter;
@@ -10,7 +11,9 @@ namespace TgenRemoterServer
     {
         public class Client
         {
+            public TgenNetProtocol.Client Socket { get; private set; }
             private string code;
+            public IPEndPoint udpEndPoint { get; set; }
             public string Code { get => code; }
             public bool ready; //Is handle ready
             public bool inRoom; //Is in room with another client
@@ -20,6 +23,7 @@ namespace TgenRemoterServer
             {
                 this.code = code;
                 ClientData = data;
+                Socket = data.client;
                 inRoom = false;
             }
 
@@ -27,6 +31,12 @@ namespace TgenRemoterServer
             public override string ToString()
             {
                 return ClientData.ToString();
+            }
+
+            public IPEndPoint GetIP()
+            {
+                IPEndPoint endPoint = Socket;
+                return new IPEndPoint(endPoint.Address, 7778);
             }
 
             public static Client GetClientByData(ClientInfo data, List<Client> clients)
@@ -108,12 +118,17 @@ namespace TgenRemoterServer
             Client sender = Client.GetClientByData(senderData, clients);
             sender.ready = true;
 
+            IPEndPoint senderTcpEp = sender.Socket.RemoteEndPoint as IPEndPoint;
+            IPAddress senderIP = senderTcpEp.Address.MapToIPv4(); //For now, we're using IPv4
+            IPEndPoint senderEP = new IPEndPoint(senderIP, obj.partnerEP.port);
+            sender.udpEndPoint = senderEP;
+
             Client partner = sender.partner;
 
             if (sender.partner.ready)
             {
-                server.Send(new NetworkMessages.ConnectionIntializedEvent(), sender);
-                server.Send(new NetworkMessages.ConnectionIntializedEvent(), partner);
+                server.Send(new NetworkMessages.ConnectionIntializedEvent(partner.udpEndPoint), sender);
+                server.Send(new NetworkMessages.ConnectionIntializedEvent(sender.udpEndPoint), partner);
 
                 sender.inRoom = true;
                 partner.inRoom = true;
