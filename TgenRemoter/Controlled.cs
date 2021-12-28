@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TgenNetProtocol;
+using TgenNetProtocol.WinForms;
 using TgenNetTools;
 
 namespace TgenRemoter

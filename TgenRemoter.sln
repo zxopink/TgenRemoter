@@ -5,11 +5,13 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoter", "TgenRemoter\TgenRemoter.csproj", "{87B709F4-71C5-47E1-B556-960A5AD53717}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenSerializer", "..\TgenSerializer\TgenSerializer\TgenSerializer.csproj", "{0902C51A-DF9D-4908-911E-5D74518D29BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgenSerializer", "..\TgenSerializer\TgenSerializer\TgenSerializer.csproj", "{0902C51A-DF9D-4908-911E-5D74518D29BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenNetProtocol", "..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj", "{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgenNetProtocol", "..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj", "{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoterServerSide", "TgenRemoterServerApp\TgenRemoterServerSide.csproj", "{F623914F-B54D-4FB5-AB48-9940890C5218}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenWinForms", "..\TgenNetProtocol\TgenWinForms\TgenWinForms.csproj", "{FC16C3D5-6370-4597-B9EE-0B0DD0C6EDE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F623914F-B54D-4FB5-AB48-9940890C5218}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F623914F-B54D-4FB5-AB48-9940890C5218}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F623914F-B54D-4FB5-AB48-9940890C5218}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC16C3D5-6370-4597-B9EE-0B0DD0C6EDE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC16C3D5-6370-4597-B9EE-0B0DD0C6EDE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC16C3D5-6370-4597-B9EE-0B0DD0C6EDE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC16C3D5-6370-4597-B9EE-0B0DD0C6EDE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

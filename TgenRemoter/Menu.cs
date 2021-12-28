@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using TgenNetProtocol;
+using TgenNetProtocol.WinForms;
 using TgenSerializer;
 
 namespace TgenRemoter
@@ -152,7 +153,6 @@ namespace TgenRemoter
         public void GotEvent(NetworkCodes.PassCode codes)
         {
             string message = codes.passCode;
-            Console.WriteLine(message);
 
             if (myPass == string.Empty)
             {

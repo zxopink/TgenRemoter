@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TgenNetProtocol;
+using TgenNetProtocol.WinForms;
 using TgenNetTools;
 
 namespace TgenRemoter
@@ -14,6 +15,7 @@ namespace TgenRemoter
         UdpManager Partner { get; set; }
         public Controller(ClientManager clientManager, UdpManager partner)
         {
+            
             InitializeComponent();
             ClientManager = clientManager;
             Partner = partner;

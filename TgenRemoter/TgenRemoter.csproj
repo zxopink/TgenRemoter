@@ -155,6 +155,10 @@
       <Project>{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}</Project>
       <Name>TgenNetProtocol</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\TgenNetProtocol\TgenWinForms\TgenWinForms.csproj">
+      <Project>{fc16c3d5-6370-4597-b9ee-0b0dd0c6ede9}</Project>
+      <Name>TgenWinForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TgenSerializer\TgenSerializer\TgenSerializer.csproj">
       <Project>{0902c51a-df9d-4908-911e-5d74518d29bc}</Project>
       <Name>TgenSerializer</Name>

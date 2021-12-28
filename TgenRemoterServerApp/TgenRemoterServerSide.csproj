@@ -41,9 +41,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TgenNetProtocol">
-      <HintPath>..\..\TgenNetProtocol\TgenNetProtocol\bin\Debug\TgenNetProtocol.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
@@ -54,6 +51,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj">
+      <Project>{4ca65e14-8db9-4f1f-9ddf-3da754fd3fa1}</Project>
+      <Name>TgenNetProtocol</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TgenSerializer\TgenSerializer\TgenSerializer.csproj">
       <Project>{0902C51A-DF9D-4908-911E-5D74518D29BC}</Project>
       <Name>TgenSerializer</Name>

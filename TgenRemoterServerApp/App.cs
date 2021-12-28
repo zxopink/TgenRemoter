@@ -54,9 +54,9 @@ namespace TgenRemoterServer
         public App()
         {
             server = new ServerManager(7777);
-            server.Start();
             server.ClientConnectedEvent += Server_ClientConnectedEvent;
             server.ClientDisconnectedEvent += Server_ClientDisconnectedEvent;
+            server.Start();
 
             Console.WriteLine($"Local ip: {server.LocalIp} and port: {7777}");
         }
