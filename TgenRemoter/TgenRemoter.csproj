@@ -152,7 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj">
-      <Project>{4CA65E14-8DB9-4F1F-9DDF-3DA754FD3FA1}</Project>
+      <Project>{4ca65e14-8db9-4f1f-9ddf-3da754fd3fa1}</Project>
       <Name>TgenNetProtocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\TgenNetProtocol\TgenWinForms\TgenWinForms.csproj">
