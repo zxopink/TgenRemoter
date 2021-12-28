@@ -9,6 +9,7 @@ using TgenNetTools;
 namespace TgenRemoter
 {
     using static NetworkMessages;
+    [System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controller : FormNetworkBehavour
     {
         ClientManager ClientManager { get; set; }
@@ -18,6 +19,7 @@ namespace TgenRemoter
             
             InitializeComponent();
             ClientManager = clientManager;
+            ClientManager.OnDisconnect += CloseWindow;
             Partner = partner;
             partner.Listen();
         }
@@ -122,9 +124,17 @@ namespace TgenRemoter
 
             Partner.Send(input);
         }
-    #endregion
+        #endregion
 
-    private void Controller_SizeChanged(object sender, EventArgs e)
+        public void CloseWindow()
+        {
+            ClientManager.Close();
+            Partner.Close();
+            MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            Application.Exit();
+        }
+
+        private void Controller_SizeChanged(object sender, EventArgs e)
         {
             ScreenSharePictureBox.Width = ClientRectangle.Width; //to fit the ratio
             ScreenSharePictureBox.Height = ClientRectangle.Height; //to fit the ratio
@@ -141,55 +151,6 @@ namespace TgenRemoter
         private void Tick_Tick(object sender, EventArgs e)
         {
             ShareMousePos();
-        }
-
-        [ClientReceiver]
-        public void Disconnected(PartnerLeft a)
-        {
-            ClientManager.Close();
-            Partner.Close();
-            MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            Close();
-            Application.Exit();
-        }
-
-        [DgramReceiver]
-        public void OnScreenFrameRecive(RemoteControlFrame Frame)
-        {
-            ScreenSharePictureBox.BackgroundImage = Frame;
-        }
-
-        [ClientReceiver]
-        public void GotNetworkFile(NetworkFile file)
-        {
-            if (!RemoteSettings.CanSendFiles) return;
-
-            Tools.UnpackFile(RemoteSettings.FolderPath, file);
-            FormTaskbarFlash.FlashWindowEx(this);
-        }
-
-        bool partnerAllowFiles;
-        [ClientReceiver]
-        public void GotSettings(NetworkPartnerSettings partnerSettings)
-        {
-            Console.WriteLine("Can send files? " + partnerSettings.AllowFiles);
-            partnerAllowFiles = partnerSettings.AllowFiles;
-        }
-
-        /// <summary>True if already received ConnectionIntializedEvent once</summary>
-        bool Initialized = false;
-        [ClientReceiver]
-        public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
-        {
-            if (Initialized)
-                return;
-
-            Initialized = true;
-            Partner.Connect(connectionIntialized.partnerEP);
-            //Send again if the first call was sent too early
-            //ClientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
-            ClientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
-            Tick.Enabled = true; //Start control
         }
 
         private void Controller_DragEnter(object sender, DragEventArgs e)

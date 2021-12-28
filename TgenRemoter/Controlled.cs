@@ -9,6 +9,7 @@ using TgenNetTools;
 namespace TgenRemoter
 {
     using static NetworkMessages;
+    [System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controlled : FormNetworkBehavour
     {
         ClientManager ClientManager { get; set; }
@@ -17,6 +18,7 @@ namespace TgenRemoter
         {
             InitializeComponent();
             ClientManager = clientManager;
+            ClientManager.OnDisconnect += CloseWindow;
             Partner = partner;
             Partner.Listen();
         }
@@ -29,22 +31,6 @@ namespace TgenRemoter
             ClientManager.Send(new ConnectionIntializedEvent(Partner.LocalEP));
         }
 
-        /// <summary>True if already received ConnectionIntializedEvent once</summary>
-        bool Initialized = false;
-        [ClientReceiver]
-        public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
-        {
-            if (Initialized)
-                return;
-
-            Initialized = true;
-            Partner.Connect(connectionIntialized.partnerEP);
-            //Send again if the first call was sent too early
-            //ClientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
-            ClientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
-            Tick.Enabled = true; //Start sharing screen
-        }
-
         private void Controlled_FormClosed(object sender, FormClosedEventArgs e)
         {
             //clientManager.Send(new PartnerLeft()); //Server handles that
@@ -52,14 +38,13 @@ namespace TgenRemoter
             Application.Exit();
         }
 
-        [DgramReceiver]
-        public void OnMouseRecive(RemoteControlMousePos mousePoint)
+        public void CloseWindow()
         {
-            Cursor.Position = new Point((int)(mousePoint.xRatio * Screen.PrimaryScreen.Bounds.Width), (int)(mousePoint.yRatio * Screen.PrimaryScreen.Bounds.Height));
+            ClientManager.Close();
+            Partner.Close();
+            MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            Application.Exit();
         }
-
-        [DgramReceiver]
-        public void OnKeyboardRecive(RemoteControlKeyboard keyboardInput) => keyboardInput.SignKey();
 
         /*
         [ClientNetworkReciver]
@@ -80,17 +65,6 @@ namespace TgenRemoter
             }
         }
         */
-        [DgramReceiver]
-        public void OnMousePress(RemoteControlMousePress mousePress) => mousePress.SignMouse();
-
-        [ClientReceiver]
-        public void Disconnected(PartnerLeft a)
-        {
-            ClientManager.Close();
-            MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            Close();
-            Application.Exit();
-        }
 
         #region Mouse Press Event
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
@@ -127,23 +101,6 @@ namespace TgenRemoter
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //A single frame can get as big as ~200,000 bytes
             Partner.Send(new RemoteControlFrame(bitmap));
-        }
-
-        bool partnerAllowFiles;
-        [ClientReceiver]
-        public void GotSettings(NetworkPartnerSettings partnerSettings)
-        {
-            partnerAllowFiles = partnerSettings.AllowFiles;
-        }
-
-        //TODO: figure out what to do here
-        [ClientReceiver]
-        public void GotNetworkFiles(NetworkFile file)
-        {
-            if (!RemoteSettings.CanSendFiles) return;
-
-            Tools.UnpackFile(RemoteSettings.FolderPath, file);
-            FormTaskbarFlash.FlashWindowEx(this);
         }
 
         private void Controlled_DragEnter(object sender, DragEventArgs e)
