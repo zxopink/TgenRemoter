@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetProtocol.WinForms;
 using TgenNetTools;
+using LiteNetLib;
 
 namespace TgenRemoter
 {
@@ -100,7 +101,7 @@ namespace TgenRemoter
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //A single frame can get as big as ~200,000 bytes
-            Partner.Send(new RemoteControlFrame(bitmap));
+            Partner.Send(new RemoteControlFrame(bitmap), DeliveryMethod.Unreliable);
         }
 
         private void Controlled_DragEnter(object sender, DragEventArgs e)

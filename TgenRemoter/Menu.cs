@@ -63,7 +63,7 @@ namespace TgenRemoter
             }
             try
             {
-                CheckForSpace(); //Check if there's enough memory in the system for the program to function properly
+                //CheckForSpace(); //Check if there's enough memory in the system for the program to function properly
             }
             catch (Exception)
             {

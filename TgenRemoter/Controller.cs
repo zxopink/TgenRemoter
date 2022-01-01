@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetProtocol.WinForms;
 using TgenNetTools;
+using LiteNetLib;
 
 namespace TgenRemoter
 {
@@ -45,13 +46,13 @@ namespace TgenRemoter
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftDown));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftDown), DeliveryMethod.ReliableOrdered);
                     break;
                 case MouseButtons.Middle:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleDown));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleDown), DeliveryMethod.ReliableOrdered);
                     break;
                 case MouseButtons.Right:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightDown));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightDown), DeliveryMethod.ReliableOrdered);
                     break;
                 case MouseButtons.None:
                     break;
@@ -69,13 +70,13 @@ namespace TgenRemoter
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftUp));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftUp), DeliveryMethod.ReliableOrdered);
                     break;
                 case MouseButtons.Middle:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleUp));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleUp), DeliveryMethod.ReliableOrdered);
                     break;
                 case MouseButtons.Right:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightUp));
+                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightUp), DeliveryMethod.ReliableOrdered);
                     break;
                 case MouseButtons.None:
                     break;
@@ -88,7 +89,7 @@ namespace TgenRemoter
             }
         }
 
-        private void ScreenSharePictureBox_MouseWheel(object sender, MouseEventArgs e) => Partner.Send(new RemoteControlMousePress(e.Delta));
+        private void ScreenSharePictureBox_MouseWheel(object sender, MouseEventArgs e) => Partner.Send(new RemoteControlMousePress(e.Delta), DeliveryMethod.ReliableUnordered);
 
         /// <summary>
         /// Called every tick
@@ -105,7 +106,7 @@ namespace TgenRemoter
 
             RemoteControlMousePos mousePos = new RemoteControlMousePos(xPos, yPos);
 
-            Partner.Send(mousePos);
+            Partner.Send(mousePos, DeliveryMethod.Unreliable);
         }
 
         private void Controller_KeyDown(object sender, KeyEventArgs e)
@@ -122,7 +123,7 @@ namespace TgenRemoter
             input.alt = e.Alt;
             input.shift = e.Shift;
 
-            Partner.Send(input);
+            Partner.Send(input, DeliveryMethod.ReliableOrdered);
         }
         #endregion
 
