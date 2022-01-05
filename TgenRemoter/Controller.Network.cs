@@ -14,10 +14,6 @@ namespace TgenRemoter
     //The 'Designer.cs' file name is to not open the file in Form Designer mode
     public partial class Controller
     {
-        [ClientReceiver]
-        public void Disconnected(PartnerLeft a) =>
-            Console.WriteLine("Left tcp channel");
-
         [DgramReceiver]
         public void OnScreenFrameRecive(RemoteControlFrame Frame)
         {
@@ -25,7 +21,7 @@ namespace TgenRemoter
             ScreenSharePictureBox.BackgroundImage = Frame;
         }
 
-        [ClientReceiver]
+        [DgramReceiver]
         public void GotNetworkFile(NetworkFile file)
         {
             if (!RemoteSettings.CanSendFiles) return;
@@ -42,20 +38,14 @@ namespace TgenRemoter
             partnerAllowFiles = partnerSettings.AllowFiles;
         }
 
-        /// <summary>True if already received ConnectionIntializedEvent once</summary>
-        bool Initialized = false;
-        [DgramReceiver]
-        public void ConnectionIntialized(TempUDPConnectAttempt attempt)
+        public void ConnectionIntialized()
         {
-            if (Initialized)
-                return;
-            Initialized = true;
-
             //Send again if the first call was sent too early
             //ClientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
             Partner.SendToAll(new NetworkPartnerSettings(RemoteSettings.CanSendFiles), DeliveryMethod.ReliableUnordered);
+
             //Must be set true IN A THREAD SAFE Environment(Not Network events), otherwise the ticking won't be enabled
-            Tick.Enabled = true; //Start control
+            Invoke(new Action(() => { Tick.Enabled = true; }));  //Tick.Enabled = true; //Start control
         }
     }
 }

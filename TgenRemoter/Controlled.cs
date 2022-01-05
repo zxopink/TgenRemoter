@@ -1,5 +1,4 @@
 ﻿using LiteNetLib;
-using RUDPSharp;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -16,16 +15,15 @@ namespace TgenRemoter
     //[System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controlled : FormNetworkBehavour
     {
-        ClientManager ClientManager { get; set; }
         UdpManager Partner { get; set; }
-        public Controlled(ClientManager clientManager, UdpManager partner, IPEndPoint partnerEP)
+        public Controlled(UdpManager partner, IPEndPoint partnerEP)
         {
-            ClientManager = clientManager;
             Partner = partner;
             Partner.NatPunchEnabled = true;
-            Partner.DisconnectedEvent += (ep, info) => { Console.WriteLine("my ip: " + partner.LocalEP + " Disconnected from: " + ep.EndPoint + ", because: " + info.Reason); CloseWindow(); };
-            Partner.ConnectedEvent += (ep) => { Partner.SendToAll(new TempUDPConnectAttempt(), DeliveryMethod.ReliableUnordered); };
+            Partner.DisconnectedEvent += (ep, info) => { CloseWindow(true); };
+            Partner.ConnectedEvent += (ep) => { ConnectionIntialized(); };
             partner.Start();
+            //The controller will attempt connection, just wait for the connection
 
             InitializeComponent();
         }
@@ -37,40 +35,16 @@ namespace TgenRemoter
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
         }
 
-        private void Controlled_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //clientManager.Send(new PartnerLeft()); //Server handles that
-            ClientManager.Close();
-            Application.Exit();
-        }
+        private void Controlled_FormClosed(object sender, FormClosedEventArgs e) =>
+            CloseWindow(false);
 
-        public void CloseWindow()
+        public void CloseWindow(bool partnerDisconnected)
         {
-            ClientManager.Close();
             Partner.Close();
-            MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if(partnerDisconnected)
+                MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Application.Exit();
         }
-
-        /*
-        [ClientNetworkReciver]
-        public void OnMousePress(RemoteControlMousePress mousePress)
-        {
-            switch (mousePress.pressType)
-            {
-                case RemoteControlMousePress.PressType.leftClick:
-                    DoLeftMouseClick();
-                    break;
-                case RemoteControlMousePress.PressType.middleClick:
-                    break;
-                case RemoteControlMousePress.PressType.rightClick:
-                    DoRightMouseClick();
-                    break;
-                default:
-                    break;
-            }
-        }
-        */
 
         #region Mouse Press Event
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
@@ -97,7 +71,6 @@ namespace TgenRemoter
 
         private void Tick_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine("Controlled_Tick");
             Rectangle bounds = Screen.PrimaryScreen.Bounds;
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
             Graphics g = Graphics.FromImage(bitmap);
@@ -132,7 +105,7 @@ namespace TgenRemoter
             }
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) ClientManager.Send(Tools.PackFile(file));
+            foreach (string file in files) Partner.SendToAll(Tools.PackFile(file), DeliveryMethod.ReliableUnordered);
         }
     }
 }

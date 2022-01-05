@@ -47,24 +47,14 @@ namespace TgenRemoter
         }
         #endregion
 
-        [Serializable]
-        public class TempUDPConnectAttempt
-        {
-
-
-        }
-
         #region Control Messages
         [Serializable]
         public class RemoteControlMousePos
         {
-            int x; int y;
             public double xRatio; public double yRatio;
-            public RemoteControlMousePos(int x, int y) { this.x = x; this.y = y; }
             public RemoteControlMousePos(double xRatio, double yRatio) { this.xRatio = xRatio; this.yRatio = yRatio; }
 
             public static implicit operator RemoteControlMousePos(Point mousePos) => new RemoteControlMousePos(mousePos.X, mousePos.Y); //turns point class into RemoteControlMousePos class
-            public static implicit operator Point(RemoteControlMousePos mousePos) => new Point(mousePos.x, mousePos.y); //turns RemoteControlMousePos class into point class
         }
 
         [Serializable]
@@ -72,7 +62,7 @@ namespace TgenRemoter
         {
             [Flags]
             [Serializable]
-            public enum MouseEventFlags
+            public enum MouseEventFlags : ushort
             {
                 LeftDown = 0x00000002,
                 LeftUp = 0x00000004,
@@ -86,6 +76,8 @@ namespace TgenRemoter
             }
             private MouseEventFlags mouseEvent;
             private int wheelDelta;
+            private float xPos;
+            private float yPos;
 
             public RemoteControlMousePress(MouseEventFlags pressType) => this.mouseEvent = pressType;
             public RemoteControlMousePress(int delta)

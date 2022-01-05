@@ -1,5 +1,4 @@
-﻿using RUDPSharp;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -13,18 +12,16 @@ using System.Diagnostics;
 namespace TgenRemoter
 {
     using static NetworkMessages;
-    //[System.ComponentModel.DesignerCategory("")] //To not view the designer on open
+    [System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controller : FormNetworkBehavour
     {
-        ClientManager ClientManager { get; set; }
         UdpManager Partner { get; set; }
-        public Controller(ClientManager clientManager, UdpManager partner, IPEndPoint partnerEP)
+        public Controller(UdpManager partner, IPEndPoint partnerEP)
         {
-            ClientManager = clientManager;
             Partner = partner;
             Partner.NatPunchEnabled = true;
-            Partner.DisconnectedEvent += (ep, info) => { Console.WriteLine("my ip: " + partner.LocalEP + " Disconnected from: " + ep.EndPoint + ", because: " + info.Reason); CloseWindow(); };
-            Partner.ConnectedEvent += (ep) => { Partner.SendToAll(new TempUDPConnectAttempt(), DeliveryMethod.ReliableUnordered); };
+            Partner.DisconnectedEvent += (ep, info) => { CloseWindow(true); };
+            Partner.ConnectedEvent += (ep) => { ConnectionIntialized(); };
             partner.Start();
             partner.Connect(partnerEP);
 
@@ -132,12 +129,11 @@ namespace TgenRemoter
         }
         #endregion
 
-        public void CloseWindow()
+        public void CloseWindow(bool partnerDisconnected)
         {
-            ClientManager.Close();
-            Console.WriteLine("Closing window");
             Partner.Close();
-            MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if(partnerDisconnected)
+                MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Application.Exit();
         }
 
@@ -147,17 +143,11 @@ namespace TgenRemoter
             ScreenSharePictureBox.Height = ClientRectangle.Height; //to fit the ratio
         }
 
-        private void Controller_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            //clientManager.Send(new PartnerLeft()); //Server handles that
-            ClientManager.Close();
-            Partner.Close();
-            Application.Exit();
-        }
+        private void Controller_FormClosed(object sender, FormClosedEventArgs e) =>
+            CloseWindow(false);
 
         private void Tick_Tick(object sender, EventArgs e)
         {
-            Console.WriteLine("Controller_Tick");
             ShareMousePos();
         }
 
@@ -181,7 +171,7 @@ namespace TgenRemoter
             }
 
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files) ClientManager.Send(Tools.PackFile(file));
+            foreach (string file in files) Partner.SendToAll(Tools.PackFile(file), DeliveryMethod.ReliableUnordered);
         }
     }
 }
