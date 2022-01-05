@@ -21,6 +21,7 @@ namespace TgenRemoter
         [DgramReceiver]
         public void OnScreenFrameRecive(RemoteControlFrame Frame)
         {
+            //TODO: Dispose Frame once done
             ScreenSharePictureBox.BackgroundImage = Frame;
         }
 
