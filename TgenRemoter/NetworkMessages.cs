@@ -18,15 +18,15 @@ namespace TgenRemoter
         public class RemoteStartedMessage { }
 
         [Serializable]
-        public class ConnectionIntializedEvent 
+        public class ExchangePartners 
         {
             public NetworkCodes.NetworkEndPoint partnerEP;
-            public ConnectionIntializedEvent()
+            public ExchangePartners()
             {
                 
             }
 
-            public ConnectionIntializedEvent(NetworkCodes.NetworkEndPoint EP)
+            public ExchangePartners(NetworkCodes.NetworkEndPoint EP)
             {
                 partnerEP = EP;
             }
@@ -46,6 +46,13 @@ namespace TgenRemoter
             }
         }
         #endregion
+
+        [Serializable]
+        public class TempUDPConnectAttempt
+        {
+
+
+        }
 
         #region Control Messages
         [Serializable]

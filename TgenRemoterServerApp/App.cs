@@ -113,7 +113,7 @@ namespace TgenRemoterServer
         }
 
         [ServerReceiver]
-        public void InitializeConnection(NetworkMessages.ConnectionIntializedEvent obj, ClientInfo senderData)
+        public void InitializeConnection(NetworkMessages.ExchangePartners obj, ClientInfo senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
             sender.ready = true;
@@ -127,8 +127,8 @@ namespace TgenRemoterServer
 
             if (sender.partner.ready)
             {
-                server.Send(new NetworkMessages.ConnectionIntializedEvent(partner.udpEndPoint), sender);
-                server.Send(new NetworkMessages.ConnectionIntializedEvent(sender.udpEndPoint), partner);
+                server.Send(new NetworkMessages.ExchangePartners(partner.udpEndPoint), sender);
+                server.Send(new NetworkMessages.ExchangePartners(sender.udpEndPoint), partner);
 
                 sender.inRoom = true;
                 partner.inRoom = true;

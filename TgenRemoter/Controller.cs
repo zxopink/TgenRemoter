@@ -1,28 +1,34 @@
-﻿using System;
+﻿using RUDPSharp;
+using System;
 using System.Drawing;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetProtocol.WinForms;
 using TgenNetTools;
 using LiteNetLib;
+using System.Diagnostics;
 
 namespace TgenRemoter
 {
     using static NetworkMessages;
-    [System.ComponentModel.DesignerCategory("")] //To not view the designer on open
+    //[System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controller : FormNetworkBehavour
     {
         ClientManager ClientManager { get; set; }
         UdpManager Partner { get; set; }
-        public Controller(ClientManager clientManager, UdpManager partner)
+        public Controller(ClientManager clientManager, UdpManager partner, IPEndPoint partnerEP)
         {
-            
-            InitializeComponent();
             ClientManager = clientManager;
-            ClientManager.OnDisconnect += CloseWindow;
             Partner = partner;
-            partner.Listen();
+            Partner.NatPunchEnabled = true;
+            Partner.DisconnectedEvent += (ep, info) => { Console.WriteLine("my ip: " + partner.LocalEP + " Disconnected from: " + ep.EndPoint + ", because: " + info.Reason); CloseWindow(); };
+            Partner.ConnectedEvent += (ep) => { Partner.SendToAll(new TempUDPConnectAttempt(), DeliveryMethod.ReliableUnordered); };
+            partner.Start();
+            partner.Connect(partnerEP);
+
+            InitializeComponent();
         }
 
         private void Controller_Load(object sender, EventArgs e)
@@ -37,7 +43,6 @@ namespace TgenRemoter
             ScreenSharePictureBox.MouseWheel += ScreenSharePictureBox_MouseWheel;
 
             SizeChanged += Controller_SizeChanged;
-            ClientManager.Send(new ConnectionIntializedEvent(Partner.LocalEP));
         }
 
         #region CursorController
@@ -46,13 +51,13 @@ namespace TgenRemoter
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftDown), DeliveryMethod.ReliableOrdered);
+                    Partner.SendToAll(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftDown), DeliveryMethod.ReliableSequenced);
                     break;
                 case MouseButtons.Middle:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleDown), DeliveryMethod.ReliableOrdered);
+                    Partner.SendToAll(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleDown), DeliveryMethod.ReliableSequenced);
                     break;
                 case MouseButtons.Right:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightDown), DeliveryMethod.ReliableOrdered);
+                    Partner.SendToAll(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightDown), DeliveryMethod.ReliableSequenced);
                     break;
                 case MouseButtons.None:
                     break;
@@ -70,13 +75,13 @@ namespace TgenRemoter
             switch (e.Button)
             {
                 case MouseButtons.Left:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftUp), DeliveryMethod.ReliableOrdered);
+                    Partner.SendToAll(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.LeftUp), DeliveryMethod.ReliableSequenced);
                     break;
                 case MouseButtons.Middle:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleUp), DeliveryMethod.ReliableOrdered);
+                    Partner.SendToAll(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.MiddleUp), DeliveryMethod.ReliableSequenced);
                     break;
                 case MouseButtons.Right:
-                    Partner.Send(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightUp), DeliveryMethod.ReliableOrdered);
+                    Partner.SendToAll(new RemoteControlMousePress(RemoteControlMousePress.MouseEventFlags.RightUp), DeliveryMethod.ReliableSequenced);
                     break;
                 case MouseButtons.None:
                     break;
@@ -89,7 +94,7 @@ namespace TgenRemoter
             }
         }
 
-        private void ScreenSharePictureBox_MouseWheel(object sender, MouseEventArgs e) => Partner.Send(new RemoteControlMousePress(e.Delta), DeliveryMethod.ReliableUnordered);
+        private void ScreenSharePictureBox_MouseWheel(object sender, MouseEventArgs e) => Partner.SendToAll(new RemoteControlMousePress(e.Delta), DeliveryMethod.ReliableSequenced);
 
         /// <summary>
         /// Called every tick
@@ -106,7 +111,7 @@ namespace TgenRemoter
 
             RemoteControlMousePos mousePos = new RemoteControlMousePos(xPos, yPos);
 
-            Partner.Send(mousePos, DeliveryMethod.Unreliable);
+            Partner.SendToAll(mousePos, DeliveryMethod.Unreliable);
         }
 
         private void Controller_KeyDown(object sender, KeyEventArgs e)
@@ -123,13 +128,14 @@ namespace TgenRemoter
             input.alt = e.Alt;
             input.shift = e.Shift;
 
-            Partner.Send(input, DeliveryMethod.ReliableOrdered);
+            Partner.SendToAll(input, DeliveryMethod.ReliableSequenced);
         }
         #endregion
 
         public void CloseWindow()
         {
             ClientManager.Close();
+            Console.WriteLine("Closing window");
             Partner.Close();
             MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Application.Exit();
@@ -151,6 +157,7 @@ namespace TgenRemoter
 
         private void Tick_Tick(object sender, EventArgs e)
         {
+            Console.WriteLine("Controller_Tick");
             ShareMousePos();
         }
 

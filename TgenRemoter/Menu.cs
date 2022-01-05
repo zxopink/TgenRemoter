@@ -149,6 +149,7 @@ namespace TgenRemoter
             }
         }
 
+        bool controlled = false;
         [ClientReceiver]
         public void GotEvent(NetworkCodes.PassCode codes)
         {
@@ -163,23 +164,48 @@ namespace TgenRemoter
 
             if (message == "SuccessController") //You control someone else
             {
-                var con2Partner = new UdpManager(udpPort);
-                Controller controllerForm = new Controller(clientManager, con2Partner);
-                controllerForm.Show();
-                Hide();
+                controlled = false;
+                IPEndPoint myEndPoint = new IPEndPoint(IPAddress.Loopback, udpPort);
+                clientManager.Send(new NetworkMessages.ExchangePartners(myEndPoint));
+                return;
             }
             else if (message == "SuccessControlled") //You are being controlled
             {
+                controlled = true;
+                IPEndPoint myEndPoint = new IPEndPoint(IPAddress.Loopback, udpPort + 1);
+                clientManager.Send(new NetworkMessages.ExchangePartners(myEndPoint));
+                return;
+            }
+
+            if (!this.Visible) return;
+            Console.WriteLine(message);
+            MessageBox.Show(message, "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        bool CreatedWindow = false;
+        [ClientReceiver]
+        public void FoundPartner(NetworkMessages.ExchangePartners connection)
+        {
+            if (CreatedWindow)
+                return;
+            CreatedWindow = true;
+
+            Console.WriteLine("Got controlled event, but is controlled? " + controlled);
+            if (controlled)
+            {
                 var con2Partner = new UdpManager(udpPort + 1); //+1 for testing sake to not have to ports bound to the same port on same computer
-                Controlled controllerForm = new Controlled(clientManager, con2Partner);
-                controllerForm.Show();
+                Controlled controlledForm = new Controlled(clientManager, con2Partner, connection.partnerEP);
+                controlledForm.Show();
                 Hide();
+                return;
             }
             else
             {
-                if (!this.Visible) return;
-                Console.WriteLine(message);
-                MessageBox.Show(message, "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                var con2Partner = new UdpManager(udpPort);
+                Controller controllerForm = new Controller(clientManager, con2Partner, connection.partnerEP);
+                controllerForm.Show();
+                Hide();
+                return;
             }
         }
 

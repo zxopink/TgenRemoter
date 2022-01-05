@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetTools;
+using LiteNetLib;
 using static TgenRemoter.NetworkMessages;
 
 namespace TgenRemoter
@@ -15,7 +16,7 @@ namespace TgenRemoter
     {
         [ClientReceiver]
         public void Disconnected(PartnerLeft a) =>
-            CloseWindow();
+            Console.WriteLine("Left tcp channel");
 
         [DgramReceiver]
         public void OnScreenFrameRecive(RemoteControlFrame Frame)
@@ -33,7 +34,7 @@ namespace TgenRemoter
         }
 
         bool partnerAllowFiles;
-        [ClientReceiver]
+        [DgramReceiver]
         public void GotSettings(NetworkPartnerSettings partnerSettings)
         {
             Console.WriteLine("Can send files? " + partnerSettings.AllowFiles);
@@ -42,17 +43,17 @@ namespace TgenRemoter
 
         /// <summary>True if already received ConnectionIntializedEvent once</summary>
         bool Initialized = false;
-        [ClientReceiver]
-        public void ConnectionIntialized(ConnectionIntializedEvent connectionIntialized)
+        [DgramReceiver]
+        public void ConnectionIntialized(TempUDPConnectAttempt attempt)
         {
             if (Initialized)
                 return;
-
             Initialized = true;
-            Partner.Connect(connectionIntialized.partnerEP);
+
             //Send again if the first call was sent too early
             //ClientManager.Send(new ConnectionIntializedEvent()); //So send again, maximum it will be ignored
-            ClientManager.Send(new NetworkPartnerSettings(RemoteSettings.CanSendFiles));
+            Partner.SendToAll(new NetworkPartnerSettings(RemoteSettings.CanSendFiles), DeliveryMethod.ReliableUnordered);
+            //Must be set true IN A THREAD SAFE Environment(Not Network events), otherwise the ticking won't be enabled
             Tick.Enabled = true; //Start control
         }
     }

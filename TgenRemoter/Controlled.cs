@@ -1,27 +1,33 @@
-﻿using System;
+﻿using LiteNetLib;
+using RUDPSharp;
+using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetProtocol.WinForms;
 using TgenNetTools;
-using LiteNetLib;
 
 namespace TgenRemoter
 {
     using static NetworkMessages;
-    [System.ComponentModel.DesignerCategory("")] //To not view the designer on open
+    //[System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controlled : FormNetworkBehavour
     {
         ClientManager ClientManager { get; set; }
         UdpManager Partner { get; set; }
-        public Controlled(ClientManager clientManager, UdpManager partner)
+        public Controlled(ClientManager clientManager, UdpManager partner, IPEndPoint partnerEP)
         {
-            InitializeComponent();
             ClientManager = clientManager;
-            ClientManager.OnDisconnect += CloseWindow;
             Partner = partner;
-            Partner.Listen();
+            Partner.NatPunchEnabled = true;
+            Partner.DisconnectedEvent += (ep, info) => { Console.WriteLine("my ip: " + partner.LocalEP + " Disconnected from: " + ep.EndPoint + ", because: " + info.Reason); CloseWindow(); };
+            Partner.ConnectedEvent += (ep) => { Partner.SendToAll(new TempUDPConnectAttempt(), DeliveryMethod.ReliableUnordered); };
+            partner.Start();
+
+            InitializeComponent();
         }
 
         private void Controlled_Load(object sender, EventArgs e)
@@ -29,7 +35,6 @@ namespace TgenRemoter
             AllowDrop = true;
             FormClosed += Controlled_FormClosed;
             FormBorderStyle = FormBorderStyle.FixedToolWindow;
-            ClientManager.Send(new ConnectionIntializedEvent(Partner.LocalEP));
         }
 
         private void Controlled_FormClosed(object sender, FormClosedEventArgs e)
@@ -92,6 +97,7 @@ namespace TgenRemoter
 
         private void Tick_Tick(object sender, EventArgs e)
         {
+            Console.WriteLine("Controlled_Tick");
             Rectangle bounds = Screen.PrimaryScreen.Bounds;
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
             Graphics g = Graphics.FromImage(bitmap);
@@ -101,7 +107,9 @@ namespace TgenRemoter
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //A single frame can get as big as ~200,000 bytes
-            Partner.Send(new RemoteControlFrame(bitmap), DeliveryMethod.Unreliable);
+            Partner.SendToAll(new RemoteControlFrame(bitmap), DeliveryMethod.ReliableOrdered);
+            g.Dispose();
+            bitmap.Dispose();
         }
 
         private void Controlled_DragEnter(object sender, DragEventArgs e)
