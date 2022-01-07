@@ -14,7 +14,7 @@ namespace TgenRemoter
     public partial class Menu : FormNetworkBehavour
     {
         ClientManager clientManager;
-        const string ip = "127.0.0.1"; //Main server ip
+        string ip = "127.0.0.1"; //Main server ip
         const int port = 7777; //Main server port
 
         string myPass = string.Empty; //Will be filled later
