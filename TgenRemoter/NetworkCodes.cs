@@ -18,6 +18,24 @@ namespace TgenRemoter
         }
 
         [Serializable]
+        public class OpenSession
+        {
+            enum Mode : byte
+            {
+                Controlled,
+                Controller
+            }
+            Mode mode;
+            NetworkEndPoint partnerEP;
+
+            public OpenSession(Mode mode, NetworkEndPoint ep)
+            {
+                this.mode = mode;
+                this.partnerEP = ep;
+            }
+        }
+
+        [Serializable]
         public class NetworkEndPoint
         {
             public byte[] address;

@@ -194,7 +194,7 @@ namespace TgenRemoter
             if (controlled)
             {
                 var con2Partner = new UdpManager(udpPort + 1); //+1 for testing sake to not have to ports bound to the same port on same computer
-                Controlled controlledForm = new Controlled(clientManager, con2Partner, connection.partnerEP);
+                Controlled controlledForm = new Controlled(con2Partner, connection.partnerEP);
                 controlledForm.Show();
                 Hide();
                 return;
@@ -202,7 +202,7 @@ namespace TgenRemoter
             else
             {
                 var con2Partner = new UdpManager(udpPort);
-                Controller controllerForm = new Controller(clientManager, con2Partner, connection.partnerEP);
+                Controller controllerForm = new Controller(con2Partner, connection.partnerEP);
                 controllerForm.Show();
                 Hide();
                 return;

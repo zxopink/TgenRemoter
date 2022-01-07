@@ -20,9 +20,17 @@ namespace TgenRemoter
         {
             Partner = partner;
             Partner.NatPunchEnabled = true;
-            Partner.DisconnectedEvent += (ep, info) => { CloseWindow(true); };
-            Partner.ConnectedEvent += (ep) => { ConnectionIntialized(); };
+            Partner.NetworkErrorEvent += (peer, error) => { TgenLog.Log("Network Error: " + error); };
+            Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
+            Partner.PeerDisconnectedEvent += (ep, info) => { TgenLog.Log("Disconnect reason: " + info.Reason); CloseWindow(true); };
+            Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
             partner.Start();
+
+            var timer = new Timer();
+            timer.Interval = Partner.DisconnectTimeout;
+            timer.Start();
+
+            timer.Tick += (sender, args) => { if (Tick.Enabled) return; TgenLog.Log("Partner failed to connect, aborting"); timer.Stop(); timer.Dispose(); CloseWindow(true); };
             //The controller will attempt connection, just wait for the connection
 
             InitializeComponent();
@@ -80,7 +88,7 @@ namespace TgenRemoter
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //A single frame can get as big as ~200,000 bytes
-            Partner.SendToAll(new RemoteControlFrame(bitmap), DeliveryMethod.ReliableOrdered);
+            Partner.SendToAll(new RemoteControlFrame(bitmap), DeliveryMethod.ReliableUnordered); //Unreliable can't be fragmanted
             g.Dispose();
             bitmap.Dispose();
         }

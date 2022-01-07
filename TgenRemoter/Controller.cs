@@ -20,8 +20,10 @@ namespace TgenRemoter
         {
             Partner = partner;
             Partner.NatPunchEnabled = true;
-            Partner.DisconnectedEvent += (ep, info) => { CloseWindow(true); };
-            Partner.ConnectedEvent += (ep) => { ConnectionIntialized(); };
+            Partner.NetworkErrorEvent += (peer, error) => { TgenLog.Log("Network Error: " + error); };
+            Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
+            Partner.PeerDisconnectedEvent += (ep, info) => { CloseWindow(true); TgenLog.Log("Disconnect reason: " + info.Reason); };
+            Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
             partner.Start();
             partner.Connect(partnerEP);
 
