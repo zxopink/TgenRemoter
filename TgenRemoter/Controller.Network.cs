@@ -8,17 +8,21 @@ using TgenNetProtocol;
 using TgenNetTools;
 using LiteNetLib;
 using static TgenRemoter.NetworkMessages;
+using System.Drawing;
 
 namespace TgenRemoter
 {
     //The 'Designer.cs' file name is to not open the file in Form Designer mode
     public partial class Controller
     {
+        Image lastFrame;
         [DgramReceiver]
         public void OnScreenFrameRecive(RemoteControlFrame Frame)
         {
             //TODO: Dispose Frame once done
+            lastFrame = ScreenSharePictureBox.BackgroundImage;
             ScreenSharePictureBox.BackgroundImage = Frame;
+            lastFrame?.Dispose();
         }
 
         [DgramReceiver]

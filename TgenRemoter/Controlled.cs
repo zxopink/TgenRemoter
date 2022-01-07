@@ -82,21 +82,13 @@ namespace TgenRemoter
 
         private void Tick_Tick(object sender, EventArgs e)
         {
-            Rectangle bounds = Screen.PrimaryScreen.Bounds;
-            Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
-            Graphics g = Graphics.FromImage(bitmap);
-            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
-            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
-            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
-            g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
-            //A single frame can get as big as ~200,000 bytes
+
+            Bitmap bitmap = GetScreenBitmap();
             Partner.SendToAll(new RemoteControlFrame(bitmap), DeliveryMethod.ReliableUnordered); //Unreliable can't be fragmanted
-            g.Dispose();
             bitmap.Dispose();
         }
 
-        private void GetScreenBitmap()
+        private Bitmap GetScreenBitmap()
         {
             Rectangle bounds = Screen.PrimaryScreen.Bounds;
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
@@ -107,9 +99,9 @@ namespace TgenRemoter
             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //A single frame can get as big as ~200,000 bytes
-
             g.Dispose();
-            bitmap.Dispose();
+            return bitmap;
+            //Don't forget to dispose bitmap at the end!
         }
 
         private void Controlled_DragEnter(object sender, DragEventArgs e)
