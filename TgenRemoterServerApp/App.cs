@@ -7,6 +7,8 @@ using TgenRemoter;
 
 namespace TgenRemoterServer
 {
+    using static NetworkCodes;
+    using static NetworkMessages;
     class App : NetworkBehavour
     {
         public class Client
@@ -25,6 +27,7 @@ namespace TgenRemoterServer
                 ClientData = data;
                 Socket = data.client;
                 inRoom = false;
+                udpEndPoint = null;
             }
 
             public static implicit operator ClientInfo(Client client) => client.ClientData;
@@ -67,7 +70,7 @@ namespace TgenRemoterServer
             Console.Write(sender.Code + " has disconnected");
             if (sender.partner != null)
             {
-                server.Send(new NetworkMessages.PartnerLeft(), sender.partner);
+                server.Send(new PartnerLeft(), sender.partner);
                 Console.WriteLine("and left client: " + sender.partner.Code);
             }
         }
@@ -81,13 +84,13 @@ namespace TgenRemoterServer
         private void Server_ClientConnectedEvent(ClientInfo client)
         {
             string code = GetCode(client);
-            server.Send(new NetworkCodes.PassCode(code), client);
+            server.Send(new PassCode(code), client);
             Client newClient = new Client(code, client);
             clients.Add(newClient);
         }
 
         [ServerReceiver]
-        public void GetPassCode(NetworkCodes.PassCode pass, ClientInfo senderData)
+        public void GetPassCode(PassCode pass, ClientInfo senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
             for (int i = 0; i < clients.Count; i++)
@@ -98,50 +101,34 @@ namespace TgenRemoterServer
                     client.partner = sender;
                     sender.partner = client;
 
-                    server.Send(new NetworkCodes.PassCode("SuccessController"), sender);
-                    server.Send(new NetworkCodes.PassCode("SuccessControlled"), client);
+                    client.udpEndPoint.Port++; //DEBUGGING SAKE ONLY
+
+                    var senderSession = new OpenSession(Mode.Controller, client.udpEndPoint);
+                    var receiverSession = new OpenSession(Mode.Controlled, sender.udpEndPoint);
+
+                    server.Send(senderSession, sender);
+                    server.Send(receiverSession, client);
 
                     //Wait for 'ConnectionIntializedEvent' (for the forms to be created)
-                    //client.inRoom = true;
-                    //sender.inRoom = true;
+                    client.inRoom = true;
+                    sender.inRoom = true;
 
                     Console.WriteLine($"Client {sender} has connected to client {client}");
                     return;
                 }
             }
-            server.Send(new NetworkCodes.PassCode("Failed to find partner"), sender);
+            server.Send(new PassCode("Failed to find partner"), sender);
         }
 
         [ServerReceiver]
-        public void InitializeConnection(NetworkMessages.ExchangePartners obj, ClientInfo senderData)
+        public void GetEndPoint(NetworkEndPoint ep, ClientInfo senderData)
         {
             Client sender = Client.GetClientByData(senderData, clients);
-            sender.ready = true;
 
             IPEndPoint senderTcpEp = sender.Socket.RemoteEndPoint as IPEndPoint;
             IPAddress senderIP = senderTcpEp.Address.MapToIPv4(); //For now, we're using IPv4
-            IPEndPoint senderEP = new IPEndPoint(senderIP, obj.partnerEP.port);
+            IPEndPoint senderEP = new IPEndPoint(senderIP, ep.port);
             sender.udpEndPoint = senderEP;
-
-            Client partner = sender.partner;
-
-            if (sender.partner.ready)
-            {
-                server.Send(new NetworkMessages.ExchangePartners(partner.udpEndPoint), sender);
-                server.Send(new NetworkMessages.ExchangePartners(sender.udpEndPoint), partner);
-
-                sender.inRoom = true;
-                partner.inRoom = true;
-            }
-        }
-
-        [ServerReceiver]
-        public void GetPassCode(object obj, ClientInfo senderData)
-        {
-            Client sender = Client.GetClientByData(senderData, clients);
-            if (!sender.inRoom) return;
-
-            server.Send(obj, sender.partner);
         }
     }
 }

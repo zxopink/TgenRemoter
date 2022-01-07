@@ -212,13 +212,15 @@ namespace TgenRemoter
         public class RemoteControlFrame
         {
             byte[] frameData;
-            public RemoteControlFrame(Bitmap screenFrame) => frameData = ToByteArray(screenFrame, ImageFormat.Jpeg);
+            public RemoteControlFrame(Bitmap screenFrame) => frameData = ToByteArray(screenFrame);
 
             public static implicit operator RemoteControlFrame(Bitmap frame) => new RemoteControlFrame(frame);
             public static implicit operator Bitmap(RemoteControlFrame imageData) => FromBytes(imageData.frameData);
 
-            private static byte[] ToByteArray(Bitmap image, ImageFormat format)
+            private static byte[] ToByteArray(Bitmap image)
             {
+                return GetCompressedBitmap(image, 50);
+                /*
                 const int maxSize = ushort.MaxValue - 29;
                 for (long quality = 15L; quality >= 0L; quality -= 5L)
                 {
@@ -230,7 +232,7 @@ namespace TgenRemoter
                         return bitMap;
                 }
                 throw new Exception("Frame can't be compressed under " + ushort.MaxValue + " bytes");
-
+                */
                 /* Old message sending, non compression
                 using (MemoryStream ms = new MemoryStream())
                 {
