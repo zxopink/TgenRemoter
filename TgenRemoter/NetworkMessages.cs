@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -212,77 +213,75 @@ namespace TgenRemoter
         public class RemoteControlFrame
         {
             byte[] frameData;
+
+            static RemoteControlFrame()
+            {
+                QualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 50L);
+                ImageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
+                Parameters = new EncoderParameters(1);
+            }
             public RemoteControlFrame(Bitmap screenFrame) => frameData = ToByteArray(screenFrame);
 
+
             public static implicit operator RemoteControlFrame(Bitmap frame) => new RemoteControlFrame(frame);
-            public static implicit operator Bitmap(RemoteControlFrame imageData) => FromBytes(imageData.frameData);
+            public static implicit operator Bitmap(RemoteControlFrame imageData)
+            {
+                return FromBytes(imageData.frameData);
+            }
 
             private static byte[] ToByteArray(Bitmap image)
             {
                 return GetCompressedBitmap(image, 50);
-                /*
-                const int maxSize = ushort.MaxValue - 29;
-                for (long quality = 15L; quality >= 0L; quality -= 5L)
-                {
-                    long size;
-                    byte[] bitMap = TryCompressBitmap(image, quality, maxSize, out size);
-                    if (bitMap == null)
-                        TgenNetProtocol.TgenLog.Log("Frame is too big: " + size + " attempting to go down on quality with: " + quality);
-                    else
-                        return bitMap;
-                }
-                throw new Exception("Frame can't be compressed under " + ushort.MaxValue + " bytes");
-                */
-                /* Old message sending, non compression
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    image.Save(ms, format);
-                    var arr = ms.ToArray();
-                    if (arr.Length > ushort.MaxValue - 100)
-                        TgenNetProtocol.TgenLog.Log("Frame is too big to send: " + arr.Length);
-                    return arr;
-                }
-                */
             }
+
+            private static EncoderParameter QualityParam;
+            private static ImageCodecInfo ImageCodec;
+            private static EncoderParameters Parameters;
 
             private static byte[] GetCompressedBitmap(Bitmap bmp, long quality)
             {
-                using (var mss = new MemoryStream())
+                MemoryStream output = new MemoryStream();
+                using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
                 {
-                    EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
-                    ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
-                    EncoderParameters parameters = new EncoderParameters(1);
-                    parameters.Param[0] = qualityParam;
-                    bmp.Save(mss, imageCodec, parameters);
-                    return mss.ToArray();
+                    //EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
+                    //ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
+                    //EncoderParameters parameters = new EncoderParameters(1);
+                    Parameters.Param[0] = QualityParam;
+                    bmp.Save(dstream, ImageCodec, Parameters);
                 }
-            }
-
-            /// <returns>Null if the byte array length is bigger than length</returns>
-            private static byte[] TryCompressBitmap(Bitmap bmp, long quality, long length, out long size)
-            {
-                using (var mss = new MemoryStream())
-                {
-                    EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
-                    ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
-                    EncoderParameters parameters = new EncoderParameters(1);
-                    parameters.Param[0] = qualityParam;
-                    bmp.Save(mss, imageCodec, parameters);
-                    size = mss.Length;
-                    if (mss.Length > length)
-                        return null;
-                    return mss.ToArray();
-                }
+                return output.ToArray();
             }
 
             private static Bitmap FromBytes(byte[] bytes)
             {
+                MemoryStream input = new MemoryStream(bytes);
                 Bitmap bmp;
-                using (var ms = new MemoryStream(bytes))
+                using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
                 {
-                    bmp = new Bitmap(ms);
+                    bmp = new Bitmap(dstream);
                 }
                 return bmp;
+            }
+
+            public static byte[] Compress(byte[] data)
+            {
+                MemoryStream output = new MemoryStream();
+                using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+                {
+                    dstream.Write(data, 0, data.Length);
+                }
+                return output.ToArray();
+            }
+
+            public static byte[] Decompress(byte[] data)
+            {
+                MemoryStream input = new MemoryStream(data);
+                MemoryStream output = new MemoryStream();
+                using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+                {
+                    dstream.CopyTo(output);
+                }
+                return output.ToArray();
             }
         }
         #endregion
