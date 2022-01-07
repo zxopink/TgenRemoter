@@ -219,6 +219,7 @@ namespace TgenRemoter
                 QualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, 50L);
                 ImageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
                 Parameters = new EncoderParameters(1);
+                Parameters.Param[0] = QualityParam;
             }
             public RemoteControlFrame(Bitmap screenFrame) => frameData = ToByteArray(screenFrame);
 
@@ -226,12 +227,14 @@ namespace TgenRemoter
             public static implicit operator RemoteControlFrame(Bitmap frame) => new RemoteControlFrame(frame);
             public static implicit operator Bitmap(RemoteControlFrame imageData)
             {
-                return FromBytes(imageData.frameData);
+                byte[] decompressed = Decompress(imageData.frameData);
+                return FromBytes(decompressed);
             }
 
             private static byte[] ToByteArray(Bitmap image)
             {
-                return GetCompressedBitmap(image, 50);
+                byte[] imagePacket = GetCompressedBitmap(image, 50);
+                return Compress(imagePacket);
             }
 
             private static EncoderParameter QualityParam;
@@ -240,25 +243,24 @@ namespace TgenRemoter
 
             private static byte[] GetCompressedBitmap(Bitmap bmp, long quality)
             {
-                MemoryStream output = new MemoryStream();
-                using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
+                byte[] image;
+                using (MemoryStream output = new MemoryStream())
                 {
                     //EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
                     //ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
                     //EncoderParameters parameters = new EncoderParameters(1);
-                    Parameters.Param[0] = QualityParam;
-                    bmp.Save(dstream, ImageCodec, Parameters);
+                    bmp.Save(output, ImageCodec, Parameters);
+                    image = output.ToArray();
                 }
-                return output.ToArray();
+                return image;
             }
 
             private static Bitmap FromBytes(byte[] bytes)
             {
-                MemoryStream input = new MemoryStream(bytes);
                 Bitmap bmp;
-                using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
+                using (var ms = new MemoryStream(bytes))
                 {
-                    bmp = new Bitmap(dstream);
+                    bmp = new Bitmap(ms);
                 }
                 return bmp;
             }
