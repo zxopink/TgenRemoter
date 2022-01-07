@@ -15,7 +15,7 @@ namespace TgenRemoterServer
         {
             public TgenNetProtocol.Client Socket { get; private set; }
             private string code;
-            public IPEndPoint udpEndPoint { get; set; }
+            //public IPEndPoint udpEndPoint { get; set; }
             public string Code { get => code; }
             public bool ready; //Is handle ready
             public bool inRoom; //Is in room with another client
@@ -27,19 +27,12 @@ namespace TgenRemoterServer
                 ClientData = data;
                 Socket = data.client;
                 inRoom = false;
-                udpEndPoint = null;
             }
 
             public static implicit operator ClientInfo(Client client) => client.ClientData;
             public override string ToString()
             {
                 return ClientData.ToString();
-            }
-
-            public IPEndPoint GetIP()
-            {
-                IPEndPoint endPoint = Socket;
-                return new IPEndPoint(endPoint.Address, 7778);
             }
 
             public static Client GetClientByData(ClientInfo data, List<Client> clients)
@@ -54,6 +47,9 @@ namespace TgenRemoterServer
         }
         List<Client> clients = new List<Client>();
         ServerManager server;
+
+        const int CONTROLLER_PORT = 7788;
+        const int CONTROLLED_PORT = 7799;
         public App()
         {
             server = new ServerManager(7777);
@@ -101,10 +97,11 @@ namespace TgenRemoterServer
                     client.partner = sender;
                     sender.partner = client;
 
-                    client.udpEndPoint.Port++; //DEBUGGING SAKE ONLY
-
-                    var senderSession = new OpenSession(Mode.Controller, client.udpEndPoint);
-                    var receiverSession = new OpenSession(Mode.Controlled, sender.udpEndPoint);
+                    
+                    IPEndPoint senderEP = GetPeerEndPoint(sender, Mode.Controller);
+                    IPEndPoint clientEP = GetPeerEndPoint(client, Mode.Controlled);
+                    var senderSession = new OpenSession(Mode.Controller, clientEP);
+                    var receiverSession = new OpenSession(Mode.Controlled, senderEP);
 
                     server.Send(senderSession, sender);
                     server.Send(receiverSession, client);
@@ -120,6 +117,23 @@ namespace TgenRemoterServer
             server.Send(new PassCode("Failed to find partner"), sender);
         }
 
+
+        /// <summary>Get EndPoint for peer to peer connection</summary>
+        public IPEndPoint GetPeerEndPoint(Client client, Mode mode)
+        {
+            IPEndPoint senderTcpEp = client.Socket.RemoteEndPoint as IPEndPoint;
+
+            int port = mode == Mode.Controlled ? CONTROLLED_PORT : CONTROLLER_PORT;
+            IPAddress senderIP = senderTcpEp.Address.MapToIPv4(); //For now, we're using IPv4
+            if (senderIP.ToString() == IPAddress.Loopback.ToString())
+            {
+                Console.WriteLine("Ip address from inside, returning: " + server.LocalIp);
+                senderIP = IPAddress.Parse(server.LocalIp);
+            }
+
+            return new IPEndPoint(senderIP, port);
+        }
+        /*
         [ServerReceiver]
         public void GetEndPoint(NetworkEndPoint ep, ClientInfo senderData)
         {
@@ -127,8 +141,15 @@ namespace TgenRemoterServer
 
             IPEndPoint senderTcpEp = sender.Socket.RemoteEndPoint as IPEndPoint;
             IPAddress senderIP = senderTcpEp.Address.MapToIPv4(); //For now, we're using IPv4
+            if (senderIP.ToString() == IPAddress.Loopback.ToString())
+            {
+                Console.WriteLine("Ip address from inside, returning: " + server.LocalIp);
+                senderIP = IPAddress.Parse(server.LocalIp);
+            }
+
             IPEndPoint senderEP = new IPEndPoint(senderIP, ep.port);
             sender.udpEndPoint = senderEP;
         }
+        */
     }
 }

@@ -16,16 +16,20 @@ namespace TgenRemoter
     public partial class Controller : FormNetworkBehavour
     {
         UdpManager Partner { get; set; }
-        public Controller(UdpManager partner, IPEndPoint partnerEP)
+        const int CONTROLLER_PORT = 7788;
+        public Controller(IPEndPoint partnerEP)
         {
-            Partner = partner;
+            Partner = new UdpManager(CONTROLLER_PORT);
             Partner.NatPunchEnabled = true;
+            //Register events
+            TgenLog.Log("controller connecting to: " + partnerEP + " and my endPoint: " + Partner.LocalEP);
             Partner.NetworkErrorEvent += (peer, error) => { TgenLog.Log("Network Error: " + error); };
             Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
             Partner.PeerDisconnectedEvent += (ep, info) => { CloseWindow(true); TgenLog.Log("Disconnect reason: " + info.Reason); };
             Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
-            partner.Start();
-            partner.Connect(partnerEP);
+
+            Partner.Start();
+            Partner.Connect(partnerEP);
 
             InitializeComponent();
         }

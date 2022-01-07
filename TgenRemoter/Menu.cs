@@ -14,9 +14,8 @@ namespace TgenRemoter
     public partial class Menu : FormNetworkBehavour
     {
         ClientManager clientManager;
-        string ip = "127.0.0.1"; //Main server ip
-        int port = 7777; //Main server port
-        int udpPort = 7788; //port to partner
+        const string ip = "127.0.0.1"; //Main server ip
+        const int port = 7777; //Main server port
 
         string myPass = string.Empty; //Will be filled later
 
@@ -161,43 +160,32 @@ namespace TgenRemoter
                 myPass = message;
                 PassLabel.Text = "Code: " + myPass;
 
-                NetworkEndPoint myEndPoint = new IPEndPoint(IPAddress.Loopback, udpPort);
-                clientManager.Send(myEndPoint);
+                //NetworkEndPoint myEndPoint = new IPEndPoint(IPAddress.Loopback, udpPort);
+                //clientManager.Send(myEndPoint);
                 return;
             }
 
-            if (!this.Visible) return;
+            if (!Visible) return;
             Console.WriteLine(message);
             MessageBox.Show(message, "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        bool CreatedWindow = false;
         [ClientReceiver]
         public void FoundPartner(OpenSession session)
         {
-            if (CreatedWindow)
-                return;
-            CreatedWindow = true;
-
             Console.WriteLine("Mode: " + session.Mode);
-            if (session.Mode == Mode.Controlled)
+            switch (session.Mode)
             {
-                TgenLog.Log("controller connecting to: " + session.PartnerEP.GetEP() + " and my port: " + (udpPort + 1));
-                var con2Partner = new UdpManager(udpPort + 1); //+1 for testing sake to not have to ports bound to the same port on same computer
-                Controlled controlledForm = new Controlled(con2Partner, session.PartnerEP);
-                controlledForm.Show();
-                Hide();
-                return;
+                case Mode.Controlled:
+                    Controlled controlledForm = new Controlled(session.PartnerEP);
+                    controlledForm.Show();
+                    break;
+                case Mode.Controller:
+                    Controller controllerForm = new Controller(session.PartnerEP);
+                    controllerForm.Show();
+                    break;
             }
-            else //Controller
-            {
-                TgenLog.Log("controller connecting to: " + session.PartnerEP.GetEP() + " and my port: " + udpPort);
-                var con2Partner = new UdpManager(udpPort);
-                Controller controllerForm = new Controller(con2Partner, session.PartnerEP);
-                controllerForm.Show();
-                Hide();
-                return;
-            }
+            Hide();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)

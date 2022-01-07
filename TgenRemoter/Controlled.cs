@@ -16,15 +16,18 @@ namespace TgenRemoter
     public partial class Controlled : FormNetworkBehavour
     {
         UdpManager Partner { get; set; }
-        public Controlled(UdpManager partner, IPEndPoint partnerEP)
+        const int CONTROLLED_PORT = 7799;
+        public Controlled(IPEndPoint partnerEP)
         {
-            Partner = partner;
+            Partner = new UdpManager(CONTROLLED_PORT);
             Partner.NatPunchEnabled = true;
+            //Register events
+            TgenLog.Log("controller connecting to: " + partnerEP + " and my endPoint: " + Partner.LocalEP);
             Partner.NetworkErrorEvent += (peer, error) => { TgenLog.Log("Network Error: " + error); };
             Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
             Partner.PeerDisconnectedEvent += (ep, info) => { TgenLog.Log("Disconnect reason: " + info.Reason); CloseWindow(true); };
             Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
-            partner.Start();
+            Partner.Start();
 
             var timer = new Timer();
             timer.Interval = Partner.DisconnectTimeout;
@@ -89,6 +92,22 @@ namespace TgenRemoter
             g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
             //A single frame can get as big as ~200,000 bytes
             Partner.SendToAll(new RemoteControlFrame(bitmap), DeliveryMethod.ReliableUnordered); //Unreliable can't be fragmanted
+            g.Dispose();
+            bitmap.Dispose();
+        }
+
+        private void GetScreenBitmap()
+        {
+            Rectangle bounds = Screen.PrimaryScreen.Bounds;
+            Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
+            Graphics g = Graphics.FromImage(bitmap);
+            g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighSpeed;
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+            g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+            g.CopyFromScreen(new Point(bounds.Left, bounds.Top), Point.Empty, bounds.Size);
+            //A single frame can get as big as ~200,000 bytes
+
             g.Dispose();
             bitmap.Dispose();
         }
