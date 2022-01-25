@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TgenRemoteServer": {
+        "commandName": "Project",
+        "remoteDebugEnabled": false
+    }
+  }
+}

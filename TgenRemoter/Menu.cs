@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using TgenNetProtocol;
 using TgenNetProtocol.WinForms;
 using TgenSerializer;
+using TgenRemoteCodes;
 
 namespace TgenRemoter
 {
@@ -14,7 +15,7 @@ namespace TgenRemoter
     public partial class Menu : FormNetworkBehavour
     {
         ClientManager clientManager;
-        string ip = "127.0.0.1"; //Main server ip
+        string ip = "5.180.182.24"; //Main server ip
         const int port = 7777; //Main server port
 
         string myPass = string.Empty; //Will be filled later
@@ -48,6 +49,8 @@ namespace TgenRemoter
             TgenLog.Reset();
             FormClosed += Form1_FormClosed;
 
+            LoadToolTips();
+
             //Change target ip name to the file's name if the name is an ip
             string exeName = Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName);
             IPAddress ipAddress = null;
@@ -56,6 +59,7 @@ namespace TgenRemoter
                 ip = exeName;
 
             clientManager = new ClientManager();
+            //clientManager.OnDisconnect += ClientManager_OnDisconnect;
             clientManager.Connect(ip, port);
             if (!clientManager.Connected)
             {
@@ -132,6 +136,9 @@ namespace TgenRemoter
             }
         }
 
+        private void ClientManager_OnDisconnect() =>
+            MessageBox.Show("Lost connection to main server!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
         /// <exception cref="IOException">Thrown when an issue with the driver occurres</exception>
         /// <exception cref="UnauthorizedAccessException">Thrown when there's no access to the driver</exception>
         private void CheckForSpace()
@@ -150,6 +157,17 @@ namespace TgenRemoter
             }
         }
 
+        private void LoadToolTips()
+        {
+            toolTip.SetToolTip(inConnCheckBox, "If checked, allows users to control this computer by entering your code");
+            toolTip.SetToolTip(CopyPassBtn, "Copys your code to the clipboard (ctrl + c)");
+            toolTip.SetToolTip(Connect, "Tries to connect another user by their code");
+            toolTip.SetToolTip(PassLabel, "Your code");
+            toolTip.SetToolTip(CheckFileTransformation, "If checked, allows partner to share files");
+            toolTip.SetToolTip(FilePathBtn, "Folder where files sent by your partner will be dropped to");
+            toolTip.SetToolTip(CreditsLabel, "That's me :D");
+        }
+
         [ClientReceiver]
         public void GotEvent(PassCode codes)
         {
@@ -159,9 +177,6 @@ namespace TgenRemoter
             {
                 myPass = message;
                 PassLabel.Text = "Code: " + myPass;
-
-                //NetworkEndPoint myEndPoint = new IPEndPoint(IPAddress.Loopback, udpPort);
-                //clientManager.Send(myEndPoint);
                 return;
             }
 
@@ -171,22 +186,38 @@ namespace TgenRemoter
         }
 
         [ClientReceiver]
-        public void FoundPartner(OpenSession session)
+        public void FoundPartner(Session session) =>
+            StartSession(session.Mode, session.PartnerEP);
+
+        [ClientReceiver]
+        /// <summary>Called when server detects the partner is from this local network</summary>
+        public void FoundPartner(LocalSession session)
         {
-            Console.WriteLine("Mode: " + session.Mode);
-            switch (session.Mode)
+            IPAddress localIP = IPAddress.Parse(clientManager.LocalIp);
+            IPEndPoint partnerEP = new IPEndPoint(localIP, session.PartnerPort);
+            StartSession(session.Mode, partnerEP);
+        }
+
+        public void StartSession(Mode mode,IPEndPoint partnerEP)
+        {
+            clientManager.Close();
+            switch (mode)
             {
                 case Mode.Controlled:
-                    Controlled controlledForm = new Controlled(session.PartnerEP);
+                    Controlled controlledForm = new Controlled(partnerEP);
                     controlledForm.Show();
                     break;
                 case Mode.Controller:
-                    Controller controllerForm = new Controller(session.PartnerEP);
+                    Controller controllerForm = new Controller(partnerEP);
                     controllerForm.Show();
                     break;
             }
             Hide();
         }
+
+        [ClientReceiver]
+        public void GotPing(Ping ping) =>
+            clientManager.Send(new Ping());
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -202,11 +233,10 @@ namespace TgenRemoter
             clientManager.Send(new PassCode(partnerIp.Text));
         }
 
-
         private void CheckFileTransformation_CheckedChanged(object sender, EventArgs e)
         {
             AllowNetworkFiles = CheckFileTransformation.Checked;
-            FIiePathBtn.Enabled = CheckFileTransformation.Checked;
+            FilePathBtn.Enabled = CheckFileTransformation.Checked;
         }
 
         private void ButtonFilePath_Click(object sender, EventArgs e)
@@ -228,7 +258,7 @@ namespace TgenRemoter
 
         private void FilesInfoBtn_Click(object sender, EventArgs e)
         {
-            string message = $"You can use the '{FIiePathBtn.Text}' to choose where you want files that your partner sends " +
+            string message = $"You can use the '{FilePathBtn.Text}' to choose where you want files that your partner sends " +
                 $"to be located. \n\n" +
                 $"If you don't want files to be transferred by the client simply uncheck " +
                 $"{CheckFileTransformation.Text}. \n\n" +
@@ -252,5 +282,10 @@ namespace TgenRemoter
         }
 
         private void CopyPassBtn_Click(object sender, EventArgs e) => Clipboard.SetText(myPass);
+
+        private void toolTip_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
     }
 }

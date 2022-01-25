@@ -28,16 +28,19 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Menu));
             this.partnerIp = new System.Windows.Forms.TextBox();
             this.Connect = new System.Windows.Forms.Button();
             this.CreditsLabel = new System.Windows.Forms.Label();
             this.CheckFileTransformation = new System.Windows.Forms.CheckBox();
-            this.FIiePathBtn = new System.Windows.Forms.Button();
+            this.FilePathBtn = new System.Windows.Forms.Button();
             this.PassLabel = new System.Windows.Forms.Label();
             this.CopyPassBtn = new System.Windows.Forms.Button();
             this.FilesInfoBtn = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.inConnCheckBox = new System.Windows.Forms.CheckBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // partnerIp
@@ -79,15 +82,15 @@
             this.CheckFileTransformation.UseVisualStyleBackColor = true;
             this.CheckFileTransformation.CheckedChanged += new System.EventHandler(this.CheckFileTransformation_CheckedChanged);
             // 
-            // FIiePathBtn
+            // FilePathBtn
             // 
-            this.FIiePathBtn.Location = new System.Drawing.Point(16, 205);
-            this.FIiePathBtn.Name = "FIiePathBtn";
-            this.FIiePathBtn.Size = new System.Drawing.Size(110, 23);
-            this.FIiePathBtn.TabIndex = 11;
-            this.FIiePathBtn.Text = "Folder Target";
-            this.FIiePathBtn.UseVisualStyleBackColor = true;
-            this.FIiePathBtn.Click += new System.EventHandler(this.ButtonFilePath_Click);
+            this.FilePathBtn.Location = new System.Drawing.Point(16, 205);
+            this.FilePathBtn.Name = "FilePathBtn";
+            this.FilePathBtn.Size = new System.Drawing.Size(110, 23);
+            this.FilePathBtn.TabIndex = 11;
+            this.FilePathBtn.Text = "Folder Target";
+            this.FilePathBtn.UseVisualStyleBackColor = true;
+            this.FilePathBtn.Click += new System.EventHandler(this.ButtonFilePath_Click);
             // 
             // PassLabel
             // 
@@ -127,16 +130,34 @@
             this.label1.TabIndex = 15;
             this.label1.Text = "Partner\'s code:";
             // 
+            // inConnCheckBox
+            // 
+            this.inConnCheckBox.AutoSize = true;
+            this.inConnCheckBox.Checked = true;
+            this.inConnCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.inConnCheckBox.Location = new System.Drawing.Point(16, 92);
+            this.inConnCheckBox.Name = "inConnCheckBox";
+            this.inConnCheckBox.Size = new System.Drawing.Size(157, 17);
+            this.inConnCheckBox.TabIndex = 16;
+            this.inConnCheckBox.Text = "Allow incoming connections";
+            this.inConnCheckBox.UseVisualStyleBackColor = true;
+            this.inConnCheckBox.Visible = false;
+            // 
+            // toolTip
+            // 
+            this.toolTip.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip_Popup);
+            // 
             // Menu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(337, 274);
+            this.Controls.Add(this.inConnCheckBox);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.FilesInfoBtn);
             this.Controls.Add(this.CopyPassBtn);
             this.Controls.Add(this.PassLabel);
-            this.Controls.Add(this.FIiePathBtn);
+            this.Controls.Add(this.FilePathBtn);
             this.Controls.Add(this.CheckFileTransformation);
             this.Controls.Add(this.CreditsLabel);
             this.Controls.Add(this.Connect);
@@ -157,11 +178,13 @@
         private System.Windows.Forms.Button Connect;
         private System.Windows.Forms.Label CreditsLabel;
         private System.Windows.Forms.CheckBox CheckFileTransformation;
-        private System.Windows.Forms.Button FIiePathBtn;
+        private System.Windows.Forms.Button FilePathBtn;
         private System.Windows.Forms.Label PassLabel;
         private System.Windows.Forms.Button CopyPassBtn;
         private System.Windows.Forms.Button FilesInfoBtn;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox inConnCheckBox;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

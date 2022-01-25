@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using TgenRemoteCodes;
 
 namespace TgenRemoter
 {
@@ -249,6 +250,7 @@ namespace TgenRemoter
                     //EncoderParameter qualityParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality);
                     //ImageCodecInfo imageCodec = ImageCodecInfo.GetImageEncoders().FirstOrDefault(o => o.FormatID == ImageFormat.Jpeg.Guid);
                     //EncoderParameters parameters = new EncoderParameters(1);
+                    //Parameters.Param[0] = QualityParam;
                     bmp.Save(output, ImageCodec, Parameters);
                     image = output.ToArray();
                 }

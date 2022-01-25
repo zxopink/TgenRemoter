@@ -51,6 +51,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aspose.Imaging">
+      <HintPath>Assemblies\Aspose.Imaging.dll</HintPath>
+    </Reference>
     <Reference Include="LiteNetLib">
       <HintPath>..\..\TgenNetProtocol\LiteNetLib\bin\Release\netstandard2.0\LiteNetLib.dll</HintPath>
     </Reference>
@@ -101,15 +104,11 @@
     <Compile Include="Controlled.Network.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Controller.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Controller.cs" />
     <Compile Include="Controller.Designer.cs">
       <DependentUpon>Controller.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controller.Network.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Controller.Network.cs" />
     <Compile Include="FormTaskbarFlash.cs" />
     <Compile Include="Menu.cs">
       <SubType>Form</SubType>
@@ -118,7 +117,6 @@
       <DependentUpon>Menu.cs</DependentUpon>
     </Compile>
     <Compile Include="KnownFolders.cs" />
-    <Compile Include="NetworkCodes.cs" />
     <Compile Include="NetworkMessages.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -187,6 +185,10 @@
     <ProjectReference Include="..\..\TgenSerializer\TgenSerializer\TgenSerializer.csproj">
       <Project>{0902c51a-df9d-4908-911e-5d74518d29bc}</Project>
       <Name>TgenSerializer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TgenRemotePackets\TgenRemoteCodes.csproj">
+      <Project>{13d91e94-a516-40e2-af92-6ec002ce4943}</Project>
+      <Name>TgenRemoteCodes</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
