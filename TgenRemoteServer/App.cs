@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using TgenNetProtocol;
 using TgenRemoteCodes;
+using TgenSerializer;
 
 namespace TgenRemoteServer
 {
@@ -18,7 +19,6 @@ namespace TgenRemoteServer
             private string code;
             //public IPEndPoint udpEndPoint { get; set; }
             public string Code { get => code; }
-            public bool ready; //Is handle ready
             public bool inRoom; //Is in room with another client
             ClientInfo ClientData;
             public Client partner;
@@ -77,9 +77,12 @@ namespace TgenRemoteServer
         public App()
         {
             server = new ServerManager(7777);
+            server.PassKeyStr = "PINK";
             server.ClientConnectedEvent += Server_ClientConnectedEvent;
             server.ClientDisconnectedEvent += Server_ClientDisconnectedEvent;
+            server.ClientPendingEvent += Server_ClientPendingEvent; ;
             server.Start();
+            TgenLog.Log($"Starting server session at {DateTime.Now}");
 
             try
             {
@@ -93,6 +96,12 @@ namespace TgenRemoteServer
             }
 
             RunServer();
+        }
+
+        private void Server_ClientPendingEvent(ClientInfo info, byte[] data, ref bool accept)
+        {
+            TgenLog.Log($"{info.client.RemoteEndPoint} is trying to connect with passCode: '{Bytes.BytesToStr(data)}'.\n" +
+                $"Do passwords match? {accept}");
         }
 
         public void RunServer()
@@ -119,7 +128,7 @@ namespace TgenRemoteServer
             {
                 if (clients[i].DeltaPing > TimeOut)
                 {
-                    Console.WriteLine($"Hasn't got a ping from {i} for {clients[i].DeltaPing.TotalSeconds} seconds, removing {i}");
+                    TgenLog.Log($"Hasn't got a ping from {i} for {clients[i].DeltaPing.TotalSeconds} seconds, removing {i}");
                     RemoveClient(clients[i]);
                 }
             }
@@ -137,7 +146,7 @@ namespace TgenRemoteServer
             if (sender == null)
                 return; //Removed already
 
-            Console.Write(sender.Code + " has disconnected");
+            TgenLog.Log($"{sender.Code} has disconnected at {DateTime.Now}");
             RemoveClient(sender);
         }
 
@@ -154,7 +163,7 @@ namespace TgenRemoteServer
             Client newClient = new Client(code, client);
             clients.Add(newClient);
 
-            Console.WriteLine(newClient.RemoteEndPoint + " has connected and received code: " + code);
+            TgenLog.Log($"{newClient.RemoteEndPoint} has connected and received code: '{code}' at {DateTime.Now}");
         }
 
         [ServerReceiver]

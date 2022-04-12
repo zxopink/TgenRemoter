@@ -15,7 +15,7 @@ namespace TgenRemoter
     public partial class Menu : FormNetworkBehavour
     {
         ClientManager clientManager;
-        string ip = "5.180.182.24"; //Main server ip
+        string ip = "5.180.182.24"; //5.180.182.24 Main server ip
         const int port = 7777; //Main server port
 
         string myPass = string.Empty; //Will be filled later
@@ -60,7 +60,7 @@ namespace TgenRemoter
 
             clientManager = new ClientManager();
             //clientManager.OnDisconnect += ClientManager_OnDisconnect;
-            clientManager.Connect(ip, port);
+            clientManager.Connect(ip, port, "PINK");
             if (!clientManager.Connected)
             {
                 MessageBox.Show("Could not connect to the main server!", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -200,6 +200,7 @@ namespace TgenRemoter
 
         public void StartSession(Mode mode,IPEndPoint partnerEP)
         {
+            NetTimer.Enabled = false;
             clientManager.Close();
             switch (mode)
             {
@@ -287,5 +288,8 @@ namespace TgenRemoter
         {
 
         }
+
+        private void NetTimer_Tick(object sender, EventArgs e) =>
+            clientManager.PollEvents();
     }
 }

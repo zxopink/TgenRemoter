@@ -41,6 +41,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.inConnCheckBox = new System.Windows.Forms.CheckBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.NetTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // partnerIp
@@ -147,6 +148,11 @@
             // 
             this.toolTip.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip_Popup);
             // 
+            // NetTimer
+            // 
+            this.NetTimer.Enabled = true;
+            this.NetTimer.Tick += new System.EventHandler(this.NetTimer_Tick);
+            // 
             // Menu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,6 +191,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox inConnCheckBox;
         private System.Windows.Forms.ToolTip toolTip;
+        private System.Windows.Forms.Timer NetTimer;
     }
 }
 
