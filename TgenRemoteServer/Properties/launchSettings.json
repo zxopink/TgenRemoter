@@ -1,8 +1,11 @@
-{
+﻿{
   "profiles": {
     "TgenRemoteServer": {
-        "commandName": "Project",
-        "remoteDebugEnabled": false
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
     }
   }
 }

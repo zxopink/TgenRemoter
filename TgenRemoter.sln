@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29905.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoter", "TgenRemoter\TgenRemoter.csproj", "{87B709F4-71C5-47E1-B556-960A5AD53717}"
 EndProject
@@ -13,9 +13,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenWinForms", "..\TgenNetP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteNetLib", "..\TgenNetProtocol\LiteNetLib\LiteNetLib.csproj", "{1867E3D1-F149-4780-9971-9EE7A8587611}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgenRemoteServer", "TgenRemoteServer\TgenRemoteServer.csproj", "{800EAE55-AD24-4466-9F09-F376368FCB88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgenRemoteCodes", "TgenRemotePackets\TgenRemoteCodes.csproj", "{13D91E94-A516-40E2-AF92-6EC002CE4943}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoteCodes", "TgenRemotePackets\TgenRemoteCodes.csproj", "{13D91E94-A516-40E2-AF92-6EC002CE4943}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgenRemoteServer_App", "TgenRemoteServer_App\TgenRemoteServer_App.csproj", "{58E6DFB3-E69A-4D84-9B94-7E8B06F11B68}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TgenRemoteServer_old", "TgenRemoteServer_old\TgenRemoteServer_old.csproj", "{E866405D-C920-4DDD-A19A-A1CC3711B692}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TgenRemoteServer", "TgenRemoteServer\TgenRemoteServer.csproj", "{8889800E-4D46-4A34-8972-B2A70297D75C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,14 +47,22 @@ Global
 		{1867E3D1-F149-4780-9971-9EE7A8587611}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1867E3D1-F149-4780-9971-9EE7A8587611}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1867E3D1-F149-4780-9971-9EE7A8587611}.Release|Any CPU.Build.0 = Release|Any CPU
-		{800EAE55-AD24-4466-9F09-F376368FCB88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{800EAE55-AD24-4466-9F09-F376368FCB88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{800EAE55-AD24-4466-9F09-F376368FCB88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{800EAE55-AD24-4466-9F09-F376368FCB88}.Release|Any CPU.Build.0 = Release|Any CPU
 		{13D91E94-A516-40E2-AF92-6EC002CE4943}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{13D91E94-A516-40E2-AF92-6EC002CE4943}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13D91E94-A516-40E2-AF92-6EC002CE4943}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13D91E94-A516-40E2-AF92-6EC002CE4943}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58E6DFB3-E69A-4D84-9B94-7E8B06F11B68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58E6DFB3-E69A-4D84-9B94-7E8B06F11B68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58E6DFB3-E69A-4D84-9B94-7E8B06F11B68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58E6DFB3-E69A-4D84-9B94-7E8B06F11B68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E866405D-C920-4DDD-A19A-A1CC3711B692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E866405D-C920-4DDD-A19A-A1CC3711B692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E866405D-C920-4DDD-A19A-A1CC3711B692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E866405D-C920-4DDD-A19A-A1CC3711B692}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8889800E-4D46-4A34-8972-B2A70297D75C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8889800E-4D46-4A34-8972-B2A70297D75C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8889800E-4D46-4A34-8972-B2A70297D75C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8889800E-4D46-4A34-8972-B2A70297D75C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

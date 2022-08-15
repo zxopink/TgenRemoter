@@ -28,7 +28,7 @@ namespace TgenRemoter
             Partner.PeerDisconnectedEvent += (ep, info) => { CloseWindow(true); TgenLog.Log("Disconnect reason: " + info.Reason); };
             Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
 
-            Partner.Start();
+            Partner.StartThread();
             Partner.Connect(partnerEP);
 
             InitializeComponent();

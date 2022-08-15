@@ -1,119 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
-using System.Threading;
+using System.Text;
+using System.Threading.Tasks;
 using TgenNetProtocol;
-using TgenRemoteCodes;
 using TgenSerializer;
+using static TgenRemoteCodes.NetworkCodes;
 
 namespace TgenRemoteServer
 {
-    using static NetworkCodes;
-    class App : NetworkBehavour
+    internal class Lobby : NetworkBehavour
     {
-        //Compile command: dotnet build --configuration Release --runtime ubuntu.20.04-x64
-        //publish project command: dotnet publish -c release -r ubuntu.20.04-x64 --self-contained
-        public class Client
-        {
-            public ClientInfo info { get; private set; }
-            private string code;
-            //public IPEndPoint udpEndPoint { get; set; }
-            public string Code { get => code; }
-            public bool inRoom; //Is in room with another client
-            ClientInfo ClientData;
-            public Client partner;
-
-            public DateTime LastPing { get; set; }
-            public TimeSpan DeltaPing => DateTime.Now - LastPing;
-
-            public IPEndPoint RemoteEndPoint { get {
-                    IPEndPoint ep = (IPEndPoint)info.client.RemoteEndPoint;
-
-                    IPAddress ip = ep.Address;
-
-                    //False Ipv6 (Ipv4 that was mapped to Ipv6 starts with this string, example: (::ffff:127.0.0.1)
-                    const string falseIpv6 = "::ffff:";
-                    bool isIpv4 = ip.ToString().Substring(0, falseIpv6.Length) == falseIpv6;
-                    if (isIpv4)
-                        ep = new IPEndPoint(ip.MapToIPv4(), ep.Port);
-
-                    return ep;
-                } }
-
-            public Client(string code, ClientInfo data)
-            {
-                this.code = code;
-                ClientData = data;
-                info = data;
-                inRoom = false;
-                LastPing = DateTime.Now;
-            }
-
-            public static implicit operator ClientInfo(Client client) => client.ClientData;
-            public override string ToString()
-            {
-                return ClientData.ToString();
-            }
-
-            public void Close() =>
-                info.client.Close();
-
-            public static Client GetClientByData(ClientInfo data, List<Client> clients)
-            {
-                foreach (var client in clients)
-                {
-                    if (data.id == client.ClientData.id)
-                        return client;
-                }
-                return null;
-            }
-        }
         List<Client> clients = new List<Client>();
         ServerManager server;
 
+        const int SERVER_PORT = 7777;
         const int CONTROLLER_PORT = 7788;
         const int CONTROLLED_PORT = 7799;
         readonly TimeSpan TimeOut = TimeSpan.FromSeconds(25);
-        public App()
+
+        private readonly ILogger<Worker> _logger;
+
+        public Lobby(ILogger<Worker> logger)
         {
-            server = new ServerManager(7777);
+            _logger = logger;
+            Setup();
+        }
+
+        public Task ExecuteAsync(CancellationToken stoppingToken) =>
+            RunServer(stoppingToken);
+
+        public void StopAsync(CancellationToken cancellationToken) =>
+            server.Close();
+
+        private void Setup()
+        {
+            server = new ServerManager(SERVER_PORT);
             server.PassKeyStr = "PINK";
             server.ClientConnectedEvent += Server_ClientConnectedEvent;
             server.ClientDisconnectedEvent += Server_ClientDisconnectedEvent;
             server.ClientPendingEvent += Server_ClientPendingEvent; ;
             server.Start();
-            TgenLog.Log($"Starting server session at {DateTime.Now}");
+            Log($"Starting server session at {DateTime.Now}");
 
             try
             {
-                Console.WriteLine($"Public ip: {server.PublicIp} and port: {7777}");
-                //Console.WriteLine($"Local ip: {server.LocalIp} and port: {7777}");
+                Log($"Public ip: {server.PublicIp.Trim()} and port: {SERVER_PORT}");
+                //Console.WriteLine($"Local ip: {server.LocalIp} and port: {SERVER_PORT}");
             }
             catch (Exception)
             {
-
                 throw;
             }
-
-            RunServer();
         }
 
         private void Server_ClientPendingEvent(ClientInfo info, byte[] data, ref bool accept)
         {
-            TgenLog.Log($"{info.client.RemoteEndPoint} is trying to connect with passCode: '{Bytes.BytesToStr(data)}'.\n" +
+            Log($"{info.client.RemoteEndPoint} is trying to connect with passCode: '{Bytes.BytesToStr(data)}'.\n" +
                 $"Do passwords match? {accept}");
         }
 
-        public void RunServer()
+        public async Task RunServer(CancellationToken stoppingToken)
         {
             TimeSpan pingClientsEvery = TimeSpan.FromSeconds(5);
-            while (server.Active)
+            while (!stoppingToken.IsCancellationRequested && server.Active)
             {
                 DateTime timer = DateTime.Now;
                 while (DateTime.Now - timer < pingClientsEvery)
                 {
                     server.PollEvents();
-                    Thread.Sleep(100);
+                    await Task.Delay(100, stoppingToken); //Throws a TaskCanceledException on cancel
                 }
 
                 PingClients();
@@ -128,7 +85,7 @@ namespace TgenRemoteServer
             {
                 if (clients[i].DeltaPing > TimeOut)
                 {
-                    TgenLog.Log($"Hasn't got a ping from {i} for {clients[i].DeltaPing.TotalSeconds} seconds, removing {i}");
+                    Log($"Hasn't got a ping from {i} for {clients[i].DeltaPing.TotalSeconds} seconds, removing {i}");
                     RemoveClient(clients[i]);
                 }
             }
@@ -146,7 +103,7 @@ namespace TgenRemoteServer
             if (sender == null)
                 return; //Removed already
 
-            TgenLog.Log($"{sender.Code} has disconnected at {DateTime.Now}");
+            Log($"{sender.Code} has disconnected at {DateTime.Now}");
             RemoveClient(sender);
         }
 
@@ -163,7 +120,7 @@ namespace TgenRemoteServer
             Client newClient = new Client(code, client);
             clients.Add(newClient);
 
-            TgenLog.Log($"{newClient.RemoteEndPoint} has connected and received code: '{code}' at {DateTime.Now}");
+            Log($"{newClient.RemoteEndPoint} has connected and received code: '{code}' at {DateTime.Now}");
         }
 
         [ServerReceiver]
@@ -201,7 +158,7 @@ namespace TgenRemoteServer
             //Solution: make them connect using their internal address
             if (senderEP.Address.Equals(clientEP.Address))
             {
-                Console.WriteLine($"{senderEP} and {clientEP} are from the same address, starting a local session");
+                Log($"{senderEP} and {clientEP} are from the same address, starting a local session");
                 //throw new NotImplementedException("Both clients use the same address");
                 senderSession = new LocalSession(Mode.Controller, clientEP.Port); //The sender's mode and his partner's EndPoint
                 receiverSession = new LocalSession(Mode.Controlled, senderEP.Port); //The receiver's mode and his partner's EndPoint
@@ -218,9 +175,8 @@ namespace TgenRemoteServer
             RemoveClient(controller);
             RemoveClient(controlled);
 
-            Console.WriteLine($"Client {controller} has connected to client {controlled}");
+            Log($"Client {controller} has connected to client {controlled}");
         }
-
 
         /// <summary>Get EndPoint for peer to peer connection</summary>
         public IPEndPoint GetPeerEndPoint(Client client, Mode mode)
@@ -238,6 +194,12 @@ namespace TgenRemoteServer
         {
             Client client = Client.GetClientByData(senderData, clients);
             client.LastPing = DateTime.Now;
+        }
+
+        private void Log(string data, LogLevel level = LogLevel.Information)
+        {
+            _logger.Log(level, data);
+            TgenLog.Log(data);
         }
     }
 }

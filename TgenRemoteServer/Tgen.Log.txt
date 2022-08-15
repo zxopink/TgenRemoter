@@ -1,0 +1,61 @@
+Starting server session at 14/08/2022 23:48:47
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Starting server session at 14/08/2022 23:53:10
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49899 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49899 has connected and received code: '168-0' at 14/08/2022 23:53:11
+Starting server session at 14/08/2022 23:53:44
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49907 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49907 has connected and received code: '573-0' at 14/08/2022 23:53:44
+Hasn't got a ping from 0 for 25.2113544 seconds, removing 0
+Aborting client: 0
+Starting server session at 14/08/2022 23:54:33
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49915 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49915 has connected and received code: '573-0' at 14/08/2022 23:54:33
+Starting server session at 14/08/2022 23:55:07
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49926 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49926 has connected and received code: '764-0' at 14/08/2022 23:55:08
+Starting server session at 14/08/2022 23:55:39
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49945 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49945 has connected and received code: '411-0' at 14/08/2022 23:55:39
+Hasn't got a ping from 0 for 26.5166448 seconds, removing 0
+Aborting client: 0
+Starting server session at 14/08/2022 23:59:14
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49972 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49972 has connected and received code: '891-0' at 14/08/2022 23:59:17
+Starting server session at 14/08/2022 23:59:37
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49978 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49978 has connected and received code: '684-0' at 14/08/2022 23:59:37
+Starting server session at 15/08/2022 00:00:07
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49991 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49991 has connected and received code: '936-0' at 15/08/2022 00:00:08
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 15/08/2022 00:13:15
+Public ip: 2a0d:6fc0:1fbd:8500:f4fe:71e7:9ce9:b58c and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:53981 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:53981 has connected and received code: '479-0' at 15/08/2022 00:13:15

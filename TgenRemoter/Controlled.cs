@@ -27,7 +27,7 @@ namespace TgenRemoter
             Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
             Partner.PeerDisconnectedEvent += (ep, info) => { TgenLog.Log("Disconnect reason: " + info.Reason); CloseWindow(true); };
             Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
-            Partner.Start();
+            Partner.StartThread();
 
             var timer = new Timer();
             timer.Interval = Partner.DisconnectTimeout;
