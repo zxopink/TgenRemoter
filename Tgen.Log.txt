@@ -17,3 +17,4 @@ adding Menu [TgenNetProtocol.WinForms.FormNetworkBehavour], Text:  to the list
 adding RemoteForm [TgenNetProtocol.WinForms.FormNetworkBehavour], Text:  to the list
 adding Menu [TgenNetProtocol.WinForms.FormNetworkBehavour], Text:  to the list
 adding Menu [TgenNetProtocol.WinForms.FormNetworkBehavour], Text:  to the list
+adding Menu [TgenNetProtocol.WinForms.FormNetworkBehavour], Text:  to the list

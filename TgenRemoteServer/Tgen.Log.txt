@@ -59,3 +59,134 @@ Accepting new socket!
 [::ffff:127.0.0.1]:53981 is trying to connect with passCode: 'PINK'.
 Do passwords match? True
 127.0.0.1:53981 has connected and received code: '479-0' at 15/08/2022 00:13:15
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:16:59
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:17:15
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49731 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49731 has connected and received code: '710-0' at 09/09/2022 19:17:16
+0 has disconnected
+Aborting client: 0
+710-0 has disconnected at 09/09/2022 19:17:21
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:18:02
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49746 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49746 has connected and received code: '906-0' at 09/09/2022 19:18:03
+0 has disconnected
+Aborting client: 0
+906-0 has disconnected at 09/09/2022 19:18:08
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:19:50
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49764 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49764 has connected and received code: '273-0' at 09/09/2022 19:19:51
+0 has disconnected
+Aborting client: 0
+273-0 has disconnected at 09/09/2022 19:19:56
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:21:39
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49799 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49799 has connected and received code: '486-0' at 09/09/2022 19:21:39
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:22:38
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49807 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49807 has connected and received code: '401-0' at 09/09/2022 19:22:39
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:24:59
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49830 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49830 has connected and received code: '663-0' at 09/09/2022 19:24:59
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:28:06
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49843 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49843 has connected and received code: '726-0' at 09/09/2022 19:28:06
+Aborting client: 0
+726-0 has disconnected at 09/09/2022 19:28:12
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:28:52
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49847 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49847 has connected and received code: '148-0' at 09/09/2022 19:28:53
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:31:24
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49884 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49884 has connected and received code: '348-0' at 09/09/2022 19:31:24
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:36:38
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49152 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49152 has connected and received code: '615-0' at 09/09/2022 19:36:38
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:37:38
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49163 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49163 has connected and received code: '879-0' at 09/09/2022 19:37:39
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 19:39:10
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:49171 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:49171 has connected and received code: '196-0' at 09/09/2022 19:39:10
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 20:54:54
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:53223 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:53223 has connected and received code: '349-0' at 09/09/2022 20:54:54
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 21:12:11
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:53622 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:53622 has connected and received code: '684-0' at 09/09/2022 21:12:11
+Dynamic method invoke exception: Delegate 'System.Action<TgenRemoteCodes.NetworkCodes.PassCode,TgenNetProtocol.ClientInfo>' has some invalid arguments
+Aborting client: 0
+684-0 has disconnected at 09/09/2022 21:12:16
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 21:13:01
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:53630 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:53630 has connected and received code: '132-0' at 09/09/2022 21:13:01
+Aborting client: 0
+132-0 has disconnected at 09/09/2022 21:13:11
+adding TgenRemoteServer.Lobby to the list
+Starting server session at 09/09/2022 21:13:39
+Public ip: 2a0d:6fc0:1f9e:8e00:ad59:13e1:b57a:a896 and port: 7777
+Accepting new socket!
+[::ffff:127.0.0.1]:53634 is trying to connect with passCode: 'PINK'.
+Do passwords match? True
+127.0.0.1:53634 has connected and received code: '328-0' at 09/09/2022 21:13:40

@@ -15,7 +15,8 @@ namespace TgenRemoter
     public partial class Menu : FormNetworkBehavour
     {
         ClientManager clientManager;
-        string ip = "113.30.191.147"; // 113.30.191.147 Main server ip (5.180.182.24 my old ip)
+        string domain = "yoavhaik.com";
+        string ip;
         const int port = 7777; //Main server port
 
         string myPass = string.Empty; //Will be filled later
@@ -55,6 +56,7 @@ namespace TgenRemoter
             string exeName = Path.GetFileNameWithoutExtension(AppDomain.CurrentDomain.FriendlyName);
             IPAddress ipAddress = null;
             bool isValidIp = IPAddress.TryParse(exeName, out ipAddress);
+            ip = Dns.GetHostAddresses(domain)[0].ToString();
             if (isValidIp)
                 ip = exeName;
 
