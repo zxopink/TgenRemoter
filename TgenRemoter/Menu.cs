@@ -11,7 +11,6 @@ using TgenRemoteCodes;
 namespace TgenRemoter
 {
     using static NetworkCodes;
-    using static NetworkMessages;
     public partial class Menu : FormNetworkBehavour
     {
         ClientManager clientManager;
@@ -195,8 +194,7 @@ namespace TgenRemoter
         /// <summary>Called when server detects the partner is from this local network</summary>
         public void FoundPartner(LocalSession session)
         {
-            IPAddress localIP = IPAddress.Parse(clientManager.LocalIp);
-            IPEndPoint partnerEP = new IPEndPoint(localIP, session.PartnerPort);
+            IPEndPoint partnerEP = new IPEndPoint(IPAddress.Any, session.PartnerPort);
             StartSession(session.Mode, partnerEP);
         }
 

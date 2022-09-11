@@ -25,7 +25,7 @@ namespace TgenRemoter
             TgenLog.Log("controller connecting to: " + partnerEP + " and my endPoint: " + Partner.LocalEP);
             Partner.NetworkErrorEvent += (peer, error) => { TgenLog.Log("Network Error: " + error); };
             Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
-            Partner.PeerDisconnectedEvent += (ep, info) => { CloseWindow(true); TgenLog.Log("Disconnect reason: " + info.Reason); };
+            Partner.PeerDisconnectedEvent += (ep, info) => { var reason = "Disconnect reason: " + info.Reason; CloseWindow(true, reason); TgenLog.Log(reason); };
             Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
 
             Partner.StartThread();
@@ -135,11 +135,11 @@ namespace TgenRemoter
         }
         #endregion
 
-        public void CloseWindow(bool partnerDisconnected)
+        public void CloseWindow(bool partnerDisconnected, string reason = null)
         {
             Partner.Close();
             if(partnerDisconnected)
-                MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(reason ?? "The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Application.Exit();
         }
 
