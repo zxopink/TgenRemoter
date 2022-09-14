@@ -194,7 +194,8 @@ namespace TgenRemoter
         /// <summary>Called when server detects the partner is from this local network</summary>
         public void FoundPartner(LocalSession session)
         {
-            IPEndPoint partnerEP = new IPEndPoint(IPAddress.Loopback, session.PartnerPort);
+            var localIp = LiteNetLib.NetUtils.GetLocalIp(LiteNetLib.LocalAddrType.IPv4);
+            IPEndPoint partnerEP = new IPEndPoint(IPAddress.Parse(localIp), session.PartnerPort);
             StartSession(session.Mode, partnerEP);
         }
 

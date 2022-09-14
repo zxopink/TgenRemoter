@@ -100,15 +100,11 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controlled.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Controlled.cs" />
     <Compile Include="Controlled.Designer.cs">
       <DependentUpon>Controlled.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controlled.Network.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Controlled.Network.cs" />
     <Compile Include="Controller.cs" />
     <Compile Include="Controller.Designer.cs">
       <DependentUpon>Controller.cs</DependentUpon>
