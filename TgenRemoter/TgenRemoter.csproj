@@ -91,6 +91,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="TgenNetProtocol, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TgenNetProtocol\TgenNetProtocol\bin\Release\netstandard2.0\TgenNetProtocol.dll</HintPath>
+    </Reference>
     <Reference Include="UIAutomationProvider" />
     <Reference Include="WindowsBase" />
     <Reference Include="WindowsFormsIntegration" />
@@ -179,11 +183,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\TgenNetProtocol\TgenNetProtocol\TgenNetProtocol.csproj">
-      <Project>{4ca65e14-8db9-4f1f-9ddf-3da754fd3fa1}</Project>
-      <Name>TgenNetProtocol</Name>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
-    </ProjectReference>
     <ProjectReference Include="..\..\TgenNetProtocol\TgenWinForms\TgenWinForms.csproj">
       <Project>{fc16c3d5-6370-4597-b9ee-0b0dd0c6ede9}</Project>
       <Name>TgenWinForms</Name>

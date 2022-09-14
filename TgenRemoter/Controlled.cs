@@ -12,7 +12,7 @@ using TgenNetTools;
 namespace TgenRemoter
 {
     using static NetworkMessages;
-    //[System.ComponentModel.DesignerCategory("")] //To not view the designer on open
+    [System.ComponentModel.DesignerCategory("")] //To not view the designer on open
     public partial class Controlled : FormNetworkBehavour
     {
         UdpManager Partner { get; set; }
@@ -25,7 +25,7 @@ namespace TgenRemoter
             TgenLog.Log("controller connecting to: " + partnerEP + " and my endPoint: " + Partner.LocalEP);
             Partner.NetworkErrorEvent += (peer, error) => { TgenLog.Log("Network Error: " + error); };
             Partner.NetworkLatencyUpdateEvent += (peer, latency) => { TgenLog.Log("New latency: " + latency); };
-            Partner.PeerDisconnectedEvent += (ep, info) => { TgenLog.Log("Disconnect reason: " + info.Reason); CloseWindow(true); };
+            Partner.PeerDisconnectedEvent += (ep, info) => { var reason = "Disconnect reason: " + info.Reason; CloseWindow(true, reason); TgenLog.Log(reason); };
             Partner.PeerConnectedEvent += (ep) => { ConnectionIntialized(); };
             Partner.StartThread();
 
@@ -49,11 +49,11 @@ namespace TgenRemoter
         private void Controlled_FormClosed(object sender, FormClosedEventArgs e) =>
             CloseWindow(false);
 
-        public void CloseWindow(bool partnerDisconnected)
+        public void CloseWindow(bool partnerDisconnected, string reason = null)
         {
             Partner.Close();
-            if(partnerDisconnected)
-                MessageBox.Show("The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            if (partnerDisconnected)
+                MessageBox.Show(reason ?? "The other side has disconnected", "NOTE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             Application.Exit();
         }
 
